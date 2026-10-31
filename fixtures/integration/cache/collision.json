@@ -1,0 +1,23 @@
+{
+  "exitCode": 1,
+  "stdout": [{
+    "filePath": "<project>/eslint.config.mjs",
+    "messages": [{
+      "ruleId": "portable-paths/no-case-collisions",
+      "severity": 2,
+      "message": "Paths collide under NFC normalization and Unicode case folding: \"Logo.webp\", \"logo.webp\".",
+      "line": 1,
+      "column": 1,
+      "messageId": "collision"
+    }],
+    "suppressedMessages": [],
+    "errorCount": 1,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "source": "import { createConfig } from \"eslint-plugin-portable-paths\";\n\nexport default [createConfig({ root: import.meta.dirname })];\n",
+    "usedDeprecatedRules": []
+  }],
+  "stderr": ""
+}

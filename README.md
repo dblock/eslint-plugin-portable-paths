@@ -17,13 +17,29 @@ Add this to `eslint.config.mjs`:
 ```js
 import { createConfig } from "eslint-plugin-portable-paths";
 
-export default [
-  // Your other ESLint configurations.
-  createConfig({ root: import.meta.dirname }),
-];
+export default [createConfig({ root: import.meta.dirname })];
 ```
 
-Run `npx eslint .`. The helper scans names under `root`, including dotfiles, binary filenames, symlinks, and empty directories. It never reads file contents or follows descendant symlinks.
+Run:
+
+```sh
+npx eslint .
+```
+
+For files named `Logo.svg` and `logo.svg`, example output is:
+
+```text
+/path/to/project/eslint.config.mjs
+  1:1  error  Paths collide under NFC normalization and Unicode case folding: "Logo.svg", "logo.svg"  portable-paths/no-case-collisions
+
+✖ 1 problem (1 error, 0 warnings)
+```
+
+The absolute project path is shortened here. This example requires a filesystem that can retain both spellings; a case-insensitive filesystem may collapse or overwrite one. Collisions are reported, never automatically renamed.
+
+## Reporting
+
+The helper scans names under `root`, including dotfiles, binary filenames, symlinks, and empty directories. It never reads file contents or follows descendant symlinks.
 
 Each collision group produces one ordinary ESLint error on the first line of `eslint.config.mjs`, listing all conflicting paths. The configuration file is a **reporting anchor**, not the only file being checked. This lets a project-wide rule report binary and directory-only collisions without trying to parse every file as JavaScript.
 
@@ -53,7 +69,9 @@ createConfig({
 
 Unreadable directories, malformed options, and filenames that cannot be represented as valid UTF-8 are errors, not clean results.
 
-## no-case-collisions
+## Rules
+
+### no-case-collisions
 
 Paths are compared using `caseFold(path.normalize("NFC")).normalize("NFC")`, with the full default Unicode folding table from the pinned `unicode-case-folding` dependency.
 
@@ -100,4 +118,8 @@ npm run check
 npm pack --dry-run
 ```
 
-Tests use synthetic inventories for collisions so they work on case-insensitive hosts, plus real filesystem discovery and ESLint reporting/cache integration.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the development workflow and data-driven CLI acceptance suite, [DESIGN.md](DESIGN.md) for the filesystem inventory, reporting, and caching architecture, and [AGENTS.md](AGENTS.md) for automated contributor instructions.
+
+## License
+
+MIT. See [LICENSE](LICENSE).

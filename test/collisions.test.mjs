@@ -1,11 +1,10 @@
 import assert from "node:assert/strict";
-import { execFileSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
-import { createRequire } from "node:module";
 import { join, resolve } from "node:path";
 import { tmpdir } from "node:os";
+import process from "node:process";
 import { test } from "node:test";
-import { pathToFileURL } from "node:url";
+import { stripVTControlCharacters } from "node:util";
 import { ESLint } from "eslint";
 import plugin, { createConfig, findCollisions, scanPaths } from "../index.mjs";
 
@@ -81,7 +80,7 @@ test("scans dotfiles, binary files, empty directories, and symlinks without foll
   const outside = join(directory, "outside");
   mkdirSync(outside);
   writeFileSync(join(outside, "Outside.js"), "");
-  symlinkSync(outside, join(root, "linked"));
+  symlinkSync(outside, join(root, "linked"), process.platform === "win32" ? "junction" : "dir");
   assert.deepEqual(scanPaths(root), [
     ".env", "Empty", "Wrong.webp", "eslint.config.mjs", "linked",
   ]);
@@ -126,46 +125,15 @@ test("reports one finding per group without fixes, and invalidates cached findin
   assert.equal(result.messages[0].ruleId, "portable-paths/no-case-collisions");
   assert.equal(result.messages[0].line, 1);
   assert(!result.messages.some((message) => message.fix));
-  assert.equal((await lint(["Logo.svg", "logo.svg"], true))[0].output, undefined);
+  const single = (await lint(["Logo.svg", "logo.svg"], true))[0];
+  assert.equal(single.output, undefined);
+  const formatter = await new ESLint({ cwd: root, overrideConfigFile: true }).loadFormatter("stylish");
+  const output = stripVTControlCharacters(formatter.format([single]))
+    .replace(single.filePath, "/path/to/project/eslint.config.mjs")
+    .trim();
+  const readme = readFileSync(resolve(import.meta.dirname, "..", "README.md"), "utf8");
+  const documented = readme.match(/```text\n([\s\S]*?)\n```/);
+  assert(documented, "README must include example output.");
+  assert.equal(output, documented[1].trim());
   assert.equal((await lint(["Logo.svg"]))[0].errorCount, 0);
-});
-
-test("runs the packed plugin independently with ESLint 9", async (context) => {
-  const { directory, root } = fixture(context);
-  const source = resolve(import.meta.dirname, "..");
-  const [packed] = JSON.parse(execFileSync(
-    "npm", ["pack", "--json", "--pack-destination", directory],
-    { cwd: source, encoding: "utf8", stdio: ["ignore", "pipe", "pipe"], timeout: 60000 },
-  ));
-  assert(packed.files.some((file) => file.path === "index.mjs"));
-  assert(!packed.files.some((file) => file.path.startsWith("test/")));
-  const manifest = join(root, "package.json");
-  writeFileSync(manifest, JSON.stringify({
-    private: true,
-    type: "module",
-    dependencies: {
-      eslint: "9.39.0",
-      "eslint-plugin-portable-paths": `file:${join(directory, packed.filename)}`,
-    },
-  }));
-  execFileSync("npm", ["install", "--ignore-scripts", "--no-audit", "--no-fund", "--loglevel=error"], {
-    cwd: root, stdio: "pipe", timeout: 120000,
-  });
-  writeFileSync(join(root, "README"), "not JavaScript");
-  writeFileSync(join(root, "image.webp"), new Uint8Array([0, 255]));
-  const require = createRequire(manifest);
-  const installed = await import(pathToFileURL(require.resolve("eslint-plugin-portable-paths")).href);
-  const { ESLint: ConsumerESLint } = await import(pathToFileURL(require.resolve("eslint")).href);
-  const config = installed.createConfig({ root });
-  config.rules["portable-paths/no-case-collisions"][1].collisions = installed.findCollisions([
-    "Logo.webp", "logo.webp",
-  ]);
-  const results = await new ConsumerESLint({
-    cwd: root, overrideConfigFile: true, overrideConfig: [config],
-  }).lintFiles(["."]);
-  assert.equal(results.length, 1);
-  assert.equal(results[0].fatalErrorCount, 0);
-  assert.equal(results[0].errorCount, 1);
-  assert(results[0].messages[0].message.includes('"Logo.webp", "logo.webp"'));
-  assert.equal(readFileSync(join(root, "eslint.config.mjs"), "utf8"), "export default [];\n");
 });

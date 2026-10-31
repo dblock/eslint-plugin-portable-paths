@@ -1,0 +1,4 @@
+{
+  "command": ["eslint", ".", "--format", "json"],
+  "expected": "expected.json"
+}

@@ -1,6 +1,7 @@
-import { createConfig } from "./index.mjs";
+import { createConfig, DEFAULT_IGNORE } from "./index.mjs";
 
 export default [
+  { ignores: ["fixtures/**"] },
   {
     files: ["**/*.mjs"],
     rules: {
@@ -9,5 +10,5 @@ export default [
       eqeqeq: "error",
     },
   },
-  createConfig({ root: import.meta.dirname }),
+  createConfig({ root: import.meta.dirname, ignore: [...DEFAULT_IGNORE, "fixtures/**"] }),
 ];

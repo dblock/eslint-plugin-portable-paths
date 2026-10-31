@@ -1,0 +1,9 @@
+{
+  "requiresCaseSensitiveFilesystem": true,
+  "command": ["eslint", ".", "--fix", "--format", "json"],
+  "expected": "expected.json",
+  "files": [
+    { "path": "Logo.webp", "bytes": [0, 255, 0] },
+    { "path": "logo.webp", "bytes": [0, 255, 0] }
+  ]
+}
