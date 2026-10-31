@@ -1,0 +1,40 @@
+{
+  "exitCode": 1,
+  "stdout": [{
+    "filePath": "<project>/eslint.config.mjs",
+    "messages": [{
+      "ruleId": "portable-paths/no-windows-invalid-names",
+      "severity": 2,
+      "message": "Invalid Windows name: \"NUL.txt\" (reserved device name).",
+      "line": 1,
+      "column": 1,
+      "messageId": "invalidName"
+    }, {
+      "ruleId": "portable-paths/no-windows-invalid-names",
+      "severity": 2,
+      "message": "Invalid Windows name: \"assets.\" (trailing space or period).",
+      "line": 1,
+      "column": 1,
+      "messageId": "invalidName"
+    }],
+    "suppressedMessages": [],
+    "errorCount": 2,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "source": "import portablePaths from \"eslint-plugin-portable-paths\";\n\nexport default [{\n  ignores: [\"NUL.txt\"],\n  plugins: { \"portable-paths\": portablePaths },\n  rules: { \"portable-paths/no-windows-invalid-names\": \"error\" },\n}];\n",
+    "usedDeprecatedRules": []
+  }, {
+    "filePath": "<project>/other.mjs",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  }],
+  "stderr": ""
+}

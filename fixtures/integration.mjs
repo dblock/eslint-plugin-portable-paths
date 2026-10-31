@@ -6,13 +6,13 @@ import {
 } from "node:fs";
 import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
-import { dirname, join, resolve, sep } from "node:path";
+import { dirname, join, resolve, sep, toNamespacedPath } from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 
 function snapshot(root) {
   return Object.fromEntries(readdirSync(root).sort().map((name) => {
-    const path = join(root, name);
+    const path = toNamespacedPath(join(root, name));
     const entry = lstatSync(path);
     const metadata = { mode: entry.mode, mtimeMs: entry.mtimeMs };
     if (entry.isSymbolicLink()) {
@@ -31,7 +31,7 @@ function within(root, path) {
   assert(path && !path.split("/").some((part) => !part || part === "." || part === ".."));
   const absolute = resolve(root, ...path.split("/"));
   assert(absolute.startsWith(`${root}${sep}`), `Path escapes fixture root: ${path}`);
-  return absolute;
+  return toNamespacedPath(absolute);
 }
 
 function addFiles(project, files = []) {
@@ -115,6 +115,8 @@ export function createConsumer(context) {
   assert(archive.files.some((file) => file.path === "src/paths.mjs"));
   assert(archive.files.some((file) => file.path === "src/rules/no-case-collisions/index.mjs"));
   assert(archive.files.some((file) => file.path === "src/rules/no-case-collisions/README.md"));
+  assert(archive.files.some((file) => file.path === "src/rules/no-windows-invalid-names/index.mjs"));
+  assert(archive.files.some((file) => file.path === "src/rules/no-windows-invalid-names/README.md"));
   assert(!archive.files.some((file) => /^(?:test|fixtures)\//.test(file.path)));
   const sourceRequire = createRequire(join(source, "package.json"));
   const eslint = JSON.parse(readFileSync(sourceRequire.resolve("eslint/package.json"), "utf8"));
@@ -152,6 +154,9 @@ export function createConsumer(context) {
       assert(Array.isArray(steps) && steps.length);
       for (const step of steps) {
         if (step !== definition) addFiles(project, step.files);
+        const removals = step.removeFiles === undefined ? [] : step.removeFiles;
+        assert(Array.isArray(removals));
+        for (const path of removals) rmSync(within(project, path));
         assert(Array.isArray(step.command) && step.command[0] === "eslint");
         assert(step.command.every((argument) => typeof argument === "string"));
         const expected = JSON.parse(readFileSync(within(fixture, step.expected), "utf8"));

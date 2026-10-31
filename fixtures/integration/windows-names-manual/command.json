@@ -1,0 +1,8 @@
+{
+  "files": [
+    { "path": "NUL.txt", "bytes": [0, 255, 0] },
+    { "path": "assets./image.webp", "bytes": [0, 255] }
+  ],
+  "command": ["eslint", ".", "--format", "json"],
+  "expected": "expected.json"
+}

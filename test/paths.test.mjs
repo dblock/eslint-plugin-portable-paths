@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { mkdirSync, symlinkSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { join, toNamespacedPath } from "node:path";
 import process from "node:process";
 import { test } from "node:test";
 import { scanPaths } from "../src/paths.mjs";
@@ -31,4 +31,14 @@ test("scans dotfiles, binary files, empty directories, and symlinks without foll
   ]);
   assert(scanPaths(root, { ignores: [] }).includes("node_modules/Dependency.js"));
   assert(!scanPaths(root, { ignores: ["Wrong.webp"] }).includes("Wrong.webp"));
+});
+
+test("retains Windows-invalid directory spellings and their descendants", (context) => {
+  const { root } = fixture(context);
+  const directory = toNamespacedPath(join(root, "assets."));
+  mkdirSync(directory);
+  writeFileSync(join(directory, "image.webp"), new Uint8Array([0, 255]));
+  assert.deepEqual(scanPaths(root), [
+    "assets.", "assets./image.webp", "eslint.config.mjs",
+  ]);
 });
