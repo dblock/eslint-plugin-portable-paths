@@ -1,0 +1,15 @@
+{
+  "requiresCaseSensitiveFilesystem": true,
+  "files": [{ "path": "Logo.webp", "bytes": [0, 255, 0] }],
+  "steps": [
+    {
+      "command": ["eslint", ".", "--cache", "--cache-location", "<cache>", "--format", "json"],
+      "expected": "clean.json"
+    },
+    {
+      "command": ["eslint", ".", "--cache", "--cache-location", "<cache>", "--format", "json"],
+      "expected": "collision.json",
+      "files": [{ "path": "logo.webp", "bytes": [0, 255, 0] }]
+    }
+  ]
+}

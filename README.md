@@ -15,9 +15,22 @@ npm install --save-dev eslint github:dblock/eslint-plugin-portable-paths
 Add this to `eslint.config.mjs`:
 
 ```js
-import { createConfig } from "eslint-plugin-portable-paths";
+import portablePaths from "eslint-plugin-portable-paths";
 
-export default [createConfig({ root: import.meta.dirname })];
+export default [
+  {
+    plugins: { "portable-paths": portablePaths },
+    rules: { "portable-paths/no-case-collisions": "error" },
+  },
+];
+```
+
+Or use the recommended preset, which registers the plugin and enables its rule:
+
+```js
+import portablePaths from "eslint-plugin-portable-paths";
+
+export default [portablePaths.configs.recommended];
 ```
 
 Run:
@@ -39,20 +52,24 @@ The absolute project path is shortened here. This example requires a filesystem 
 
 ## Reporting
 
-The helper scans names under `root`, including dotfiles, binary filenames, symlinks, and empty directories. It never reads file contents or follows descendant symlinks.
+Standard registration and the recommended preset scan the current process working directory, including dotfiles, binary filenames, symlinks, and empty directories. Run ESLint from the project root; there is no Git-root discovery. The scanner never reads file contents or follows descendant symlinks.
 
-Each collision group produces one ordinary ESLint error on the first line of `eslint.config.mjs`, listing all conflicting paths. The configuration file is a **reporting anchor**, not the only file being checked. This lets a project-wide rule report binary and directory-only collisions without trying to parse every file as JavaScript.
+Each collision group produces one ordinary ESLint error on the first line of the reporting anchor, listing all conflicting paths. By default, the anchor is the first existing regular file among `eslint.config.js`, `eslint.config.mjs`, and `eslint.config.cjs`, in that order. The configuration file is a **reporting anchor**, not the only file being checked. This lets a project-wide rule report binary and directory-only collisions without trying to parse every file as JavaScript, and avoids duplicate reports when other JavaScript files are linted.
 
-The anchor must be an existing regular JavaScript file included in your ESLint invocation and not ignored by ESLint. For a different configuration filename:
+The anchor must be included in your ESLint invocation and not ignored by ESLint. For a custom root or reporting file, the optional helper supplies an explicit snapshot:
 
 ```js
-createConfig({
+import { createConfig } from "eslint-plugin-portable-paths";
+
+export default [createConfig({
   root: import.meta.dirname,
-  reportOn: "eslint.config.js",
-});
+  reportOn: "tools/report.js",
+})];
 ```
 
-`root` defaults to the current working directory. `reportOn` defaults to `eslint.config.mjs` and must be a literal, root-relative POSIX path, not a glob. Narrow invocations such as `eslint src/` do not run the project-wide check if they omit the anchor.
+For the helper, `root` defaults to the current working directory and `reportOn` defaults to `eslint.config.mjs`; `reportOn` must name an existing regular JavaScript file using a literal, root-relative POSIX path, not a glob. Programmatic callers with an ESLint `cwd` different from the process working directory should use the helper with an explicit `root`. The helper supplies its own scoped plugin registration; do not combine it with the default plugin or preset under the same namespace.
+
+Narrow invocations such as `eslint src/` do not run the project-wide check if they omit the anchor.
 
 ## Inventory Scope
 
@@ -72,6 +89,8 @@ Unreadable directories, malformed options, and filenames that cannot be represen
 ## Rules
 
 ### no-case-collisions
+
+Configure this rule with `"error"` or `"warn"`, or disable it with `"off"`. Filesystem snapshots and anchors are supplied automatically; the `collisions` and `anchor` rule options are internal snapshot data, not ordinary user settings. Use `createConfig()` for custom inventory exclusions, roots, or anchors.
 
 Paths are compared using `caseFold(path.normalize("NFC")).normalize("NFC")`, with the full default Unicode folding table from the pinned `unicode-case-folding` dependency.
 
@@ -93,11 +112,13 @@ A filesystem inventory can only discover names the host filesystem actually reta
 
 ## Snapshots and ESLint Caching
 
-`createConfig` scans once when the configuration is evaluated and embeds collision groups in the rule options. A changed collision set changes ESLint's configuration cache key, so an unchanged reporting anchor is rechecked on a fresh CLI invocation with `--cache`.
+For standard registration and the recommended preset, ESLint evaluates the rule's default options during configuration normalization, before checking cached results. Those defaults contain the filesystem collision snapshot and reporting anchor. A changed collision set changes ESLint's configuration cache key, so an unchanged reporting anchor is rechecked on a fresh CLI invocation with `--cache`.
+
+ESLint also normalizes defaults for configured `"off"` entries; omit the rule entry entirely if no inventory scan is wanted. The helper instead scans once during `createConfig()` evaluation and supplies explicit snapshot options without evaluating the working-directory defaults.
 
 This MVP targets fresh CLI runs. Editors, watch processes, and long-lived Node API integrations must rebuild the configuration after path changes; the plugin does not watch the filesystem. Discovery is not an atomic filesystem transaction.
 
-The rule's `collisions` option is supplied by `createConfig`. Registering the rule without the helper does not automatically discover files.
+Importing the plugin or accessing its preset does not scan the filesystem by itself.
 
 ## Programmatic API
 

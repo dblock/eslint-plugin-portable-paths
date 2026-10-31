@@ -1,5 +1,5 @@
 import { lstatSync, readdirSync, statSync } from "node:fs";
-import { isAbsolute, join, resolve } from "node:path";
+import { basename, dirname, isAbsolute, join, resolve } from "node:path";
 import process from "node:process";
 import { Buffer } from "node:buffer";
 import { TextDecoder } from "node:util";
@@ -125,38 +125,77 @@ export function scanPaths(root = process.cwd(), supplied = {}) {
   return paths.sort();
 }
 
-const rule = {
-  meta: {
-    type: "problem",
-    docs: {
-      description: "Detect case-insensitive and Unicode-normalization path collisions.",
-      url: "https://github.com/dblock/eslint-plugin-portable-paths#no-case-collisions",
-    },
-    schema: [{
-      type: "object",
-      properties: {
-        collisions: {
+function reportingPath(root, reportOn) {
+  relativePath(reportOn);
+  if (/[*?[\]{}()]/.test(reportOn) || reportOn.startsWith("!")) {
+    throw new TypeError("reportOn must name a literal file without glob syntax.");
+  }
+  const path = join(root, ...reportOn.split("/"));
+  if (!lstatSync(path).isFile()) {
+    throw new TypeError("reportOn must name an existing regular JavaScript file.");
+  }
+  if (!/\.[cm]?js$/.test(reportOn)) {
+    throw new TypeError("reportOn must name a JavaScript file.");
+  }
+  return path;
+}
+
+const ruleMeta = {
+  type: "problem",
+  docs: {
+    description: "Detect case-insensitive and Unicode-normalization path collisions.",
+    url: "https://github.com/dblock/eslint-plugin-portable-paths#no-case-collisions",
+  },
+  schema: [{
+    type: "object",
+    properties: {
+      anchor: { type: "string", minLength: 1 },
+      collisions: {
+        type: "array",
+        items: {
           type: "array",
-          items: {
-            type: "array",
-            minItems: 2,
-            uniqueItems: true,
-            items: { type: "string", minLength: 1 },
-          },
+          minItems: 2,
+          uniqueItems: true,
+          items: { type: "string", minLength: 1 },
         },
       },
-      required: ["collisions"],
-      additionalProperties: false,
-    }],
-    messages: {
-      collision: "Paths collide under NFC normalization and Unicode case folding: {{paths}}.",
+    },
+    required: ["collisions"],
+    additionalProperties: false,
+  }],
+  messages: {
+    collision: "Paths collide under NFC normalization and Unicode case folding: {{paths}}.",
+  },
+};
+
+const rule = {
+  meta: {
+    ...ruleMeta,
+    // ESLint applies defaults before computing its cache key, even for cached files.
+    get defaultOptions() {
+      const root = rootPath(process.cwd());
+      const paths = scanPaths(root);
+      const reportOn = ["eslint.config.js", "eslint.config.mjs", "eslint.config.cjs"]
+        .find((name) => paths.includes(name) && lstatSync(join(root, name)).isFile());
+      if (!reportOn) {
+        throw new TypeError("No reporting anchor at the working directory. Use createConfig({ root, reportOn }) for a custom root or anchor.");
+      }
+      return [{
+        anchor: reportingPath(root, reportOn),
+        collisions: findCollisions(paths),
+      }];
     },
   },
   create(context) {
     if (!context.options[0]) {
-      throw new TypeError("Use createConfig() to supply a filesystem collision snapshot.");
+      throw new TypeError("Filesystem snapshot defaults require ESLint 9.39 or newer.");
     }
-    const { collisions } = context.options[0];
+    const { collisions, anchor = join(context.cwd, "eslint.config.mjs") } = context.options[0];
+    if (!isAbsolute(anchor) || !anchor.isWellFormed() || anchor.includes("\0")) {
+      throw new TypeError("Snapshot anchor must be an absolute JavaScript file path.");
+    }
+    reportingPath(dirname(anchor), basename(anchor));
+    if (resolve(context.filename) !== anchor) return {};
     return {
       Program() {
         for (const paths of collisions) {
@@ -174,30 +213,34 @@ const rule = {
 const plugin = {
   meta: { name: "eslint-plugin-portable-paths", version: "0.1.0" },
   rules: { "no-case-collisions": rule },
+  configs: {},
+};
+
+plugin.configs.recommended = {
+  name: "portable-paths/recommended",
+  files: ["eslint.config.{js,mjs,cjs}"],
+  plugins: { "portable-paths": plugin },
+  rules: { "portable-paths/no-case-collisions": "error" },
 };
 
 export function createConfig(supplied = {}) {
   options(supplied, ["root", "ignore", "reportOn"]);
   const root = rootPath(supplied.root === undefined ? process.cwd() : supplied.root);
   const reportOn = supplied.reportOn === undefined ? "eslint.config.mjs" : supplied.reportOn;
-  relativePath(reportOn);
-  if (/[*?[\]{}()]/.test(reportOn) || reportOn.startsWith("!")) {
-    throw new TypeError("reportOn must name a literal file without glob syntax.");
-  }
-  if (!lstatSync(join(root, ...reportOn.split("/"))).isFile()) {
-    throw new TypeError("reportOn must name an existing regular JavaScript file.");
-  }
-  if (!/\.[cm]?js$/.test(reportOn)) {
-    throw new TypeError("reportOn must name a JavaScript file.");
-  }
+  const anchor = reportingPath(root, reportOn);
   const collisions = findCollisions(scanPaths(root, { ignore: supplied.ignore }));
   return {
     name: "portable-paths/no-case-collisions",
     basePath: root,
     files: [reportOn],
-    plugins: { "portable-paths": plugin },
+    plugins: {
+      "portable-paths": {
+        meta: plugin.meta,
+        rules: { "no-case-collisions": { ...rule, meta: ruleMeta } },
+      },
+    },
     rules: {
-      "portable-paths/no-case-collisions": ["error", { collisions }],
+      "portable-paths/no-case-collisions": ["error", { anchor, collisions }],
     },
   };
 }

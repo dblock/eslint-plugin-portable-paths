@@ -4,9 +4,11 @@
 
 ## Configuration
 
-ESLint requires an exported configuration to enable plugins and rules. Installing or importing this plugin does not run a scan. The default export is the standard ESLint plugin object; `createConfig()` returns a flat configuration that registers the plugin, enables its rule, and supplies a collision snapshot.
+ESLint requires an exported configuration to enable plugins and rules. The default export is the standard ESLint plugin object, registered through `plugins`; `rules` enables `portable-paths/no-case-collisions` using ordinary severity settings. `plugin.configs.recommended` combines registration and activation in a flat-config preset. Importing the plugin or accessing its preset does not run a scan.
 
-The `root` argument is optional and defaults to the current working directory. `createConfig()` is sufficient when ESLint runs from the project root with an `eslint.config.mjs` reporting anchor. Setting `root: import.meta.dirname` explicitly keeps the inventory scope tied to the configuration's directory even when ESLint starts elsewhere. The `export default` in the project's configuration is still required.
+Standard configuration uses the process working directory as its inventory root; users should run ESLint from the project root. The plugin does not discover a Git root. `createConfig()` remains available for explicit roots, inventory exclusions, reporting files, or programmatic callers with a different ESLint `cwd`. Its `root` argument defaults to the process working directory.
+
+The helper supplies a snapshot-scoped rule definition without dynamic defaults, so custom-root or ignore settings do not accidentally trigger an additional scan of the process working directory. Its registration is distinct from the default plugin; do not register both under the same namespace.
 
 ## Inventory
 
@@ -32,9 +34,11 @@ This is a conservative portability policy, not exact filesystem emulation. It do
 
 ## Reporting Anchor
 
-Accumulating filenames visited by ESLint would miss binary assets, directories, ignored counterparts, cached files, and paths omitted by a narrowed invocation. Instead, `createConfig()` builds its filesystem snapshot independently of ESLint's file selection.
+Accumulating filenames visited by ESLint would miss binary assets, directories, ignored counterparts, cached files, and paths omitted by a narrowed invocation. Instead, configuration-time snapshot defaults enumerate the filesystem independently of ESLint's file selection.
 
-The rule runs on one reporting anchor and emits one ordinary ESLint error per collision group at line 1, listing all conflicting paths. The default anchor is `eslint.config.mjs`; `reportOn` may select another existing regular JavaScript file using a literal, root-relative POSIX path.
+The rule emits one ordinary ESLint error per collision group at line 1 of one reporting anchor, listing all conflicting paths. Standard configuration selects the first existing regular file among `eslint.config.js`, `eslint.config.mjs`, and `eslint.config.cjs`, matching ESLint's precedence for those extensions. The recommended preset selects configuration filenames; manual registration can apply to every JavaScript file, but the rule reports only on the snapshot's absolute anchor.
+
+The helper's default anchor remains `eslint.config.mjs`. Its `reportOn` option may select another existing regular JavaScript file using a literal, root-relative POSIX path.
 
 The anchor must be included in the ESLint invocation and must not be ignored. An invocation such as `eslint src/` does not run the project-wide rule if it omits the anchor. No asset parser or processor is necessary because asset contents never reach ESLint.
 
@@ -42,9 +46,11 @@ The rule does not rename files or offer fixes, including under `--fix`.
 
 ## Snapshot Lifetime and Caching
 
-Each `createConfig()` evaluation scans once and embeds the resulting collision groups in rule options. A changed collision set changes ESLint's configuration cache key, so a fresh CLI invocation with `--cache` rechecks an unchanged anchor when a counterpart appears or disappears.
+The default rule exposes a lazy `meta.defaultOptions` getter. ESLint merges these defaults into normalized rule options before computing its cache key, even when a source file has cached results. The getter builds a plain, serializable snapshot containing collision groups and an absolute reporting anchor. It does not change plugin version metadata or scan from the rule's `create()` callback.
 
-Scanning inside the rule instead would leave external path changes out of that cache key. The snapshot helper therefore handles discovery, while the rule only reports the supplied groups.
+A changed collision set therefore changes the configuration cache key for both manual registration and the recommended preset. A fresh CLI invocation with `--cache` rechecks an unchanged anchor when a counterpart appears or disappears. Defaults may be evaluated for multiple normalized configurations, including configured disabled rules; the plugin does not maintain a global mutable scan cache.
+
+Each `createConfig()` evaluation instead scans once and embeds explicit collision groups and an anchor in rule options. Scanning only inside the rule would leave external path changes out of the cache key; both configuration paths keep discovery before that cache boundary, while the rule only reports supplied groups.
 
 Fresh CLI runs are the supported lifecycle. Editors, watch processes, and long-lived integrations must rebuild the configuration after path changes. There is no filesystem watcher, and discovery is not an atomic filesystem transaction.
 

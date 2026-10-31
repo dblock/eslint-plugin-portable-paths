@@ -2,6 +2,7 @@
 
 ## 0.1.0 (Unreleased)
 
+- Support normal plugin/rule registration and a recommended preset with automatic cache-safe filesystem snapshots and a single configuration-file reporting anchor ([#2](https://github.com/dblock/eslint-plugin-portable-paths/pull/2)).
 - Add a filesystem-wide `no-case-collisions` rule with NFC normalization and full Unicode case folding.
 - Include binary filenames, symlinks, empty directories, and inferred directory prefixes without reading file contents.
 - Add a flat-config helper with a single reporting anchor and snapshot-based ESLint cache invalidation.
