@@ -8,7 +8,7 @@ ESLint requires an exported configuration to enable plugins and rules. The defau
 
 Standard configuration uses the process working directory as its inventory root; users should run ESLint from the project root. The plugin does not discover a Git root. `createConfig()` remains available for explicit roots, inventory exclusions, reporting files, or programmatic callers with a different ESLint `cwd`. Its `root` argument defaults to the process working directory.
 
-The helper supplies a snapshot-scoped rule definition without dynamic defaults, so custom-root or ignore settings do not accidentally trigger an additional scan of the process working directory. Its registration is distinct from the default plugin; do not register both under the same namespace.
+The helper supplies a snapshot-scoped rule definition without dynamic defaults, so custom-root or exclusion settings do not accidentally trigger an additional scan of the process working directory. Its registration is distinct from the default plugin; do not register both under the same namespace.
 
 ## Inventory
 
@@ -16,7 +16,7 @@ The helper supplies a snapshot-scoped rule definition without dynamic defaults, 
 
 Names are decoded as UTF-8 with a fatal decoder. Invalid names, unreadable directories, and invalid options fail explicitly rather than producing an incomplete, clean-looking result.
 
-The default exclusions are `**/.git/**` and `**/node_modules/**`. A supplied `ignore` array replaces those defaults. Patterns are positive, root-relative globs that match dotfiles; ignored directories are pruned. Inventory exclusions are independent of ESLint ignores. There is no Git inventory or runtime network access.
+The default exclusions are `**/.git/**` and `**/node_modules/**`. A supplied `ignores` array replaces those defaults. Patterns are positive, root-relative globs that match dotfiles; ignored directories are pruned. Inventory ignores are independent of ESLint's file-selection ignores. There is no Git inventory or runtime network access.
 
 ## Collision Groups
 

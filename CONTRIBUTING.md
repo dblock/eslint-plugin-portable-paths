@@ -4,33 +4,9 @@ Read [DESIGN.md](DESIGN.md) before changing filesystem discovery, collision grou
 
 Automated contributors should also follow [AGENTS.md](AGENTS.md).
 
-## Setup
+## Development
 
-Use Node.js 22.18 or newer and install the locked development dependencies:
-
-```sh
-npm ci
-```
-
-The project uses native ES modules and has no build step. Follow the existing two-space indentation and double-quoted strings. Keep Markdown paragraphs on one line.
-
-## Checks
-
-Run the final checks before committing:
-
-```sh
-npm run check
-npm pack --dry-run
-```
-
-`npm run check` runs the Node.js test suite and ESLint. To work on a focused test file:
-
-```sh
-npm test -- test/collisions.test.mjs
-npm test -- test/integration.test.mjs
-```
-
-The package remains private until publication is explicitly prepared. Keep the archive limited to the runtime implementation and documentation; do not ship test fixtures or development dependencies.
+See [DEVELOPMENT.md](DEVELOPMENT.md) for requirements, setup, checks, packaging, and running focused tests. Follow the existing two-space indentation and double-quoted strings, and keep Markdown paragraphs on one line.
 
 ## Tests
 
@@ -48,6 +24,6 @@ GitHub Actions runs all fixtures on Linux, macOS, and Windows with Node.js 22 / 
 
 Preserve explicit errors, deterministic diagnostics, independent inventory exclusions, and read-only runtime behavior. New rules should have clear schemas, documented defaults, and tests that exercise their actual behavior through the appropriate boundary.
 
-Update directly affected documentation and keep unrelated changes out of the pull request. Include the relevant behavior and any platform limitations in its description.
+Update directly affected documentation and keep unrelated changes out of the pull request. Each README rule entry should describe the user problems it catches and include a working configuration example, showing exclusions when supported. Keep detailed guides in `rules/<rule-name>/README.md`. Include the relevant behavior and any platform limitations in the PR description.
 
 Contributions are covered by the project's [MIT license](LICENSE).

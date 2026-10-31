@@ -1,6 +1,14 @@
 # eslint-plugin-portable-paths
 
-ESLint checks for portable filesystem paths. The MVP provides one rule, `portable-paths/no-case-collisions`, comparing file and directory names across a filesystem inventory. No Git, file-content parser, or network access is required at runtime.
+[![CI](https://github.com/dblock/eslint-plugin-portable-paths/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/dblock/eslint-plugin-portable-paths/actions/workflows/ci.yml)
+[![Node.js](https://img.shields.io/badge/node-%3E%3D22.18-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
+ESLint checks for portable file and directory names.
+
+- Catch filenames like `Logo.svg` and `logo.svg` that can overwrite each other on case-insensitive filesystems.
+- Find directory clashes like `Src/` and `src/`, or a file named `ReadMe` conflicting with a directory named `readme/`.
+- Catch the same accented filename stored in two different ways, even when both names look identical.
 
 ## Installation
 
@@ -39,107 +47,53 @@ Run:
 npx eslint .
 ```
 
-For files named `Logo.svg` and `logo.svg`, example output is:
+Example output:
 
 ```text
-/path/to/project/eslint.config.mjs
-  1:1  error  Paths collide under NFC normalization and Unicode case folding: "Logo.svg", "logo.svg"  portable-paths/no-case-collisions
+eslint.config.mjs
+  1:1  error  Conflicting paths: "public/Logo.svg", "public/logo.svg"  portable-paths/no-case-collisions
 
 ✖ 1 problem (1 error, 0 warnings)
 ```
 
-The absolute project path is shortened here. This example requires a filesystem that can retain both spellings; a case-insensitive filesystem may collapse or overwrite one. Collisions are reported, never automatically renamed.
+Findings are reported on the configuration file; its project path is omitted above. Keep that file included and unignored. This rule reports collisions but does not offer autofixes. The example requires a filesystem that retains both spellings.
 
-## Reporting
+## Configuration
 
-Standard registration and the recommended preset scan the current process working directory, including dotfiles, binary filenames, symlinks, and empty directories. Run ESLint from the project root; there is no Git-root discovery. The scanner never reads file contents or follows descendant symlinks.
-
-Each collision group produces one ordinary ESLint error on the first line of the reporting anchor, listing all conflicting paths. By default, the anchor is the first existing regular file among `eslint.config.js`, `eslint.config.mjs`, and `eslint.config.cjs`, in that order. The configuration file is a **reporting anchor**, not the only file being checked. This lets a project-wide rule report binary and directory-only collisions without trying to parse every file as JavaScript, and avoids duplicate reports when other JavaScript files are linted.
-
-The anchor must be included in your ESLint invocation and not ignored by ESLint. For a custom root or reporting file, the optional helper supplies an explicit snapshot:
+Exclude `vendor/` and `generated/` from the plugin's filesystem inventory while preserving its default exclusions:
 
 ```js
-import { createConfig } from "eslint-plugin-portable-paths";
+import { createConfig, DEFAULT_IGNORES } from "eslint-plugin-portable-paths";
 
 export default [createConfig({
-  root: import.meta.dirname,
-  reportOn: "tools/report.js",
+  ignores: [...DEFAULT_IGNORES, "vendor/**", "generated/**"],
 })];
 ```
 
-For the helper, `root` defaults to the current working directory and `reportOn` defaults to `eslint.config.mjs`; `reportOn` must name an existing regular JavaScript file using a literal, root-relative POSIX path, not a glob. Programmatic callers with an ESLint `cwd` different from the process working directory should use the helper with an explicit `root`. The helper supplies its own scoped plugin registration; do not combine it with the default plugin or preset under the same namespace.
+This plugin-wide `ignores` option controls the filesystem inventory, not an individual rule. It replaces the defaults (`**/.git/**` and `**/node_modules/**`), so spread `DEFAULT_IGNORES` to retain them. ESLint's configuration-level `ignores` only controls which files it lints; it does not remove paths from this plugin's separate inventory.
 
-Narrow invocations such as `eslint src/` do not run the project-wide check if they omit the anchor.
-
-## Inventory Scope
-
-The default scanner ignores `**/.git/**` and `**/node_modules/**`. These are explicit inventory defaults, not inferred Git or ESLint exclusions.
-
-```js
-createConfig({
-  root: import.meta.dirname,
-  ignore: ["**/.git/**", "**/node_modules/**", "vendor/**"],
-});
-```
-
-`ignore` replaces the defaults; `ignore: []` scans every discoverable entry under the root. Patterns are positive, root-relative POSIX globs and include dotfiles. Ignored directories are pruned. ESLint's own ignores do not remove inventory counterparts.
-
-Unreadable directories, malformed options, and filenames that cannot be represented as valid UTF-8 are errors, not clean results.
+For integrations from code, see the [programmatic API](API.md).
 
 ## Rules
 
-### no-case-collisions
+### [no-case-collisions](rules/no-case-collisions/README.md)
 
-Configure this rule with `"error"` or `"warn"`, or disable it with `"off"`. Filesystem snapshots and anchors are supplied automatically; the `collisions` and `anchor` rule options are internal snapshot data, not ordinary user settings. Use `createConfig()` for custom inventory exclusions, roots, or anchors.
-
-Paths are compared using `caseFold(path.normalize("NFC")).normalize("NFC")`, with the full default Unicode folding table from the pinned `unicode-case-folding` dependency.
-
-Examples:
-
-| Paths | Collision |
-| --- | --- |
-| `Logo.svg`, `logo.svg` | Filename case. |
-| `Src/a.js`, `src/b.js` | Directory spellings `Src` and `src`. |
-| File `ReadMe`, directory `readme/` | File-versus-directory case. |
-| `Straße.txt`, `STRASSE.txt` | Full Unicode case folding. |
-| Composed and decomposed `é` | NFC-equivalent spellings. |
-
-Original spellings are preserved in diagnostics. Directory prefixes participate independently, so nested conflicts can produce both directory and descendant-path findings. Exact duplicates are deduplicated.
-
-This is a deterministic, conservative portability policy, **not exact emulation of Windows or macOS**. It does not apply compatibility normalization or Turkish-specific folding. It does not enforce lowercase, reject Windows reserved names, or check path lengths. Names are never renamed, including under `--fix`.
-
-A filesystem inventory can only discover names the host filesystem actually retains. On a case-insensitive filesystem, it cannot reconstruct a second spelling that was already collapsed or overwritten.
-
-## Snapshots and ESLint Caching
-
-For standard registration and the recommended preset, ESLint evaluates the rule's default options during configuration normalization, before checking cached results. Those defaults contain the filesystem collision snapshot and reporting anchor. A changed collision set changes ESLint's configuration cache key, so an unchanged reporting anchor is rechecked on a fresh CLI invocation with `--cache`.
-
-ESLint also normalizes defaults for configured `"off"` entries; omit the rule entry entirely if no inventory scan is wanted. The helper instead scans once during `createConfig()` evaluation and supplies explicit snapshot options without evaluating the working-directory defaults.
-
-This MVP targets fresh CLI runs. Editors, watch processes, and long-lived Node API integrations must rebuild the configuration after path changes; the plugin does not watch the filesystem. Discovery is not an atomic filesystem transaction.
-
-Importing the plugin or accessing its preset does not scan the filesystem by itself.
-
-## Programmatic API
+Detect clashes between filenames, directory spellings, and files versus directories when capitalization is ignored, including asset and binary filenames. It also catches the same accented name stored in different ways.
 
 ```js
-import { findCollisions, scanPaths } from "eslint-plugin-portable-paths";
+import portablePaths from "eslint-plugin-portable-paths";
 
-const paths = scanPaths("/path/to/project", { ignore: [] });
-const collisions = findCollisions(paths);
+export default [{
+  plugins: { "portable-paths": portablePaths },
+  rules: { "portable-paths/no-case-collisions": "error" },
+}];
 ```
 
-`scanPaths` returns sorted root-relative POSIX paths. `findCollisions` accepts such paths, infers directory prefixes, and returns deterministic groups of original spellings. Neither function mutates paths.
+See the [rule guide](rules/no-case-collisions/README.md) for more examples and details.
 
-## Development
+## Contributing
 
-```sh
-npm ci
-npm run check
-npm pack --dry-run
-```
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the development workflow and data-driven CLI acceptance suite, [DESIGN.md](DESIGN.md) for the filesystem inventory, reporting, and caching architecture, and [AGENTS.md](AGENTS.md) for automated contributor instructions.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidance, [DEVELOPMENT.md](DEVELOPMENT.md) for setup and checks, [DESIGN.md](DESIGN.md) for the architecture, and [AGENTS.md](AGENTS.md) for automated contributor instructions.
 
 ## License
 

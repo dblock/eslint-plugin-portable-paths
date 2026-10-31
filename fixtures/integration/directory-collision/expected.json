@@ -5,7 +5,7 @@
     "messages": [{
       "ruleId": "portable-paths/no-case-collisions",
       "severity": 2,
-      "message": "Paths collide under NFC normalization and Unicode case folding: \"Assets\", \"assets\".",
+      "message": "Conflicting paths: \"Assets\", \"assets\".",
       "line": 1,
       "column": 1,
       "messageId": "collision"

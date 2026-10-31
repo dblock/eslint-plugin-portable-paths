@@ -2,6 +2,8 @@
 
 ## 0.1.0 (Unreleased)
 
+- Rename the plugin-wide inventory option to `ignores` and its defaults to `DEFAULT_IGNORES`, and document inventory exclusions separately from individual rules and ESLint's file-selection ignores ([#3](https://github.com/dblock/eslint-plugin-portable-paths/pull/3)).
+- Simplify the README with badges, real-world problems, and rule configuration examples, split out rule, API, and development guides, and use plain-English collision diagnostics ([#3](https://github.com/dblock/eslint-plugin-portable-paths/pull/3)).
 - Support normal plugin/rule registration and a recommended preset with automatic cache-safe filesystem snapshots and a single configuration-file reporting anchor ([#2](https://github.com/dblock/eslint-plugin-portable-paths/pull/2)).
 - Add a filesystem-wide `no-case-collisions` rule with NFC normalization and full Unicode case folding.
 - Include binary filenames, symlinks, empty directories, and inferred directory prefixes without reading file contents.
