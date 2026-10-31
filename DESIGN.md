@@ -2,6 +2,8 @@
 
 `eslint-plugin-portable-paths` checks filesystem paths through ESLint. Its current rule detects collisions under Unicode normalization and case folding; filename-style enforcement, reserved names, and path-length checks are outside the MVP.
 
+All runtime code lives under `src/`. The public entry point, plugin registration, and configuration helper are in `src/index.mjs`; shared filesystem discovery and validation are in `src/paths.mjs`. The `no-case-collisions` implementation and its detailed README live together in `src/rules/no-case-collisions/`. Unit tests mirror the source layout under `test/`, separately from installed-CLI acceptance tests.
+
 ## Configuration
 
 ESLint requires an exported configuration to enable plugins and rules. The default export is the standard ESLint plugin object, registered through `plugins`; `rules` enables `portable-paths/no-case-collisions` using ordinary severity settings. `plugin.configs.recommended` combines registration and activation in a flat-config preset. Importing the plugin or accessing its preset does not run a scan.

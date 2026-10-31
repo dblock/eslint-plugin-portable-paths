@@ -5,18 +5,17 @@
   "type": "module",
   "private": true,
   "exports": {
-    ".": "./index.mjs",
+    ".": "./src/index.mjs",
     "./package.json": "./package.json"
   },
   "files": [
-    "index.mjs",
+    "src",
     "README.md",
     "CHANGELOG.md",
     "LICENSE",
     "DESIGN.md",
     "CONTRIBUTING.md",
     "AGENTS.md",
-    "rules/no-case-collisions/README.md",
     "API.md",
     "DEVELOPMENT.md"
   ],

@@ -4,10 +4,10 @@
 [![Node.js](https://img.shields.io/badge/node-%3E%3D22.18-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-ESLint checks for portable file and directory names.
+ESLint checks for portable file and directory names, especially useful when developers work on the same code across Windows, macOS, and Linux.
 
 - Catch filenames like `Logo.svg` and `logo.svg` that can overwrite each other on case-insensitive filesystems.
-- Find directory clashes like `Src/` and `src/`, or a file named `ReadMe` conflicting with a directory named `readme/`.
+- Find directory clashes like `Src/` and `src/`, or a `ReadMe` file conflicting with a directory named `readme/`.
 - Catch the same accented filename stored in two different ways, even when both names look identical.
 
 ## Installation
@@ -76,7 +76,7 @@ For integrations from code, see the [programmatic API](API.md).
 
 ## Rules
 
-### [no-case-collisions](rules/no-case-collisions/README.md)
+### [no-case-collisions](src/rules/no-case-collisions/README.md)
 
 Detect clashes between filenames, directory spellings, and files versus directories when capitalization is ignored, including asset and binary filenames. It also catches the same accented name stored in different ways.
 
@@ -89,7 +89,7 @@ export default [{
 }];
 ```
 
-See the [rule guide](rules/no-case-collisions/README.md) for more examples and details.
+See the [rule guide](src/rules/no-case-collisions/README.md) for more examples and details.
 
 ## Contributing
 

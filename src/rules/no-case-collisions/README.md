@@ -14,7 +14,7 @@ Detect file and directory names that can conflict on another filesystem, includi
 
 Original spellings remain in diagnostics. Directory prefixes participate independently, so nested conflicts can produce both directory and descendant-path findings. Exact duplicates are deduplicated.
 
-The comparison is a conservative portability policy, not exact emulation of Windows or macOS. It does not enforce lowercase, reject Windows reserved names, or check path lengths. It does not equate every visually similar character, use compatibility normalization, or apply Turkish-specific case matching. See [DESIGN.md](../../DESIGN.md#collision-groups) for the precise algorithm.
+The comparison is a conservative portability policy, not exact emulation of Windows or macOS. It does not enforce lowercase, reject Windows reserved names, or check path lengths. It does not equate every visually similar character, use compatibility normalization, or apply Turkish-specific case matching. See [DESIGN.md](../../../DESIGN.md#collision-groups) for the precise algorithm.
 
 The scanner can only discover names the host filesystem actually retains. It cannot reconstruct a spelling that a case-insensitive filesystem has already collapsed or overwritten.
 
@@ -51,7 +51,7 @@ The anchor is not the only file being checked. It allows project-wide findings f
 
 The anchor must be included in the ESLint invocation and not ignored. A narrowed invocation such as `eslint src/` does not run the project-wide check if it omits the anchor.
 
-For a custom root or reporting file, use the optional [configuration helper](../../API.md#createconfig):
+For a custom root or reporting file, use the optional [configuration helper](../../../API.md#createconfig):
 
 ```js
 import { createConfig } from "eslint-plugin-portable-paths";
@@ -70,7 +70,7 @@ Programmatic callers with an ESLint `cwd` different from the process working dir
 
 The inventory includes dotfiles, binary filenames, symlinks, and empty directories. File contents are never read, and descendant symlinks are not followed.
 
-The default scanner excludes `**/.git/**` and `**/node_modules/**`. These are explicit inventory defaults, not inferred Git or ESLint exclusions. For plugin-wide configuration and examples, see the [main README](../../README.md#configuration).
+The default scanner excludes `**/.git/**` and `**/node_modules/**`. These are explicit inventory defaults, not inferred Git or ESLint exclusions. For plugin-wide configuration and examples, see the [main README](../../../README.md#configuration).
 
 `ignores` replaces the defaults; `ignores: []` scans every discoverable entry under the root. Patterns are positive, root-relative POSIX globs and include dotfiles. Ignored directories are pruned. ESLint's own file-selection ignores do not remove inventory counterparts.
 

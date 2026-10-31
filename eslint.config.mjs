@@ -1,4 +1,4 @@
-import { createConfig, DEFAULT_IGNORES } from "./index.mjs";
+import { createConfig, DEFAULT_IGNORES } from "./src/index.mjs";
 
 export default [
   { ignores: ["fixtures/**"] },
