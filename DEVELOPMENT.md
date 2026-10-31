@@ -24,7 +24,7 @@ npm pack --dry-run
 `npm run check` runs the Node.js test suite and ESLint. To work on a focused test file:
 
 ```sh
-npm test -- test/collisions.test.mjs
+npm test -- test/rules/no-case-collisions/index.test.mjs
 npm test -- test/integration.test.mjs
 ```
 
@@ -35,5 +35,7 @@ The package remains private until publication is explicitly prepared. Keep the a
 The [data-driven CLI acceptance suite](https://github.com/dblock/eslint-plugin-portable-paths/blob/main/fixtures/README.md) packs the plugin and installs it with ESLint. Reviewed fixtures assert complete diagnostics and exit codes, offline runtime, and project/dependency immutability.
 
 All fixtures are mandatory on Linux, macOS, and Windows GitHub runners with Node.js 22 / ESLint 9 and Node.js 24 / ESLint 10. Local runs explicitly skip fixtures requiring case-distinct names when the native filesystem cannot retain them, without mounting disk images or enabling Windows filesystem flags.
+
+CI runs on pull requests and pushes to `main`. Feature-branch pushes do not start separate runs.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md#tests) for test authoring and platform setup requirements.

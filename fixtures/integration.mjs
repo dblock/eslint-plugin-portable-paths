@@ -111,7 +111,10 @@ export function createConsumer(context) {
   const [archive] = JSON.parse(npm([
     "pack", "--ignore-scripts", "--json", "--pack-destination", root,
   ], source));
-  assert(archive.files.some((file) => file.path === "index.mjs"));
+  assert(archive.files.some((file) => file.path === "src/index.mjs"));
+  assert(archive.files.some((file) => file.path === "src/paths.mjs"));
+  assert(archive.files.some((file) => file.path === "src/rules/no-case-collisions/index.mjs"));
+  assert(archive.files.some((file) => file.path === "src/rules/no-case-collisions/README.md"));
   assert(!archive.files.some((file) => /^(?:test|fixtures)\//.test(file.path)));
   const sourceRequire = createRequire(join(source, "package.json"));
   const eslint = JSON.parse(readFileSync(sourceRequire.resolve("eslint/package.json"), "utf8"));
