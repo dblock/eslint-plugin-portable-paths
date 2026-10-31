@@ -1,0 +1,51 @@
+{
+  "name": "eslint-plugin-portable-paths",
+  "version": "0.1.0",
+  "description": "ESLint checks for portable filesystem paths.",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": "./index.mjs",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.mjs",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test",
+    "lint": "eslint .",
+    "check": "npm test && npm run lint"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "peerDependencies": {
+    "eslint": "^9.39.0 || ^10.0.0"
+  },
+  "dependencies": {
+    "picomatch": "^4.0.7",
+    "unicode-case-folding": "1.1.2"
+  },
+  "devDependencies": {
+    "eslint": "^10.14.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dblock/eslint-plugin-portable-paths.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dblock/eslint-plugin-portable-paths/issues"
+  },
+  "homepage": "https://github.com/dblock/eslint-plugin-portable-paths#readme",
+  "license": "MIT",
+  "keywords": [
+    "eslint",
+    "eslintplugin",
+    "paths",
+    "portability",
+    "unicode"
+  ]
+}
