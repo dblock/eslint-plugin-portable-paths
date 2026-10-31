@@ -1,0 +1,5 @@
+{
+  "command": ["eslint", ".", "--format", "json"],
+  "expected": "expected.json",
+  "files": [{ "path": "image.webp", "bytes": [0, 255, 0] }]
+}

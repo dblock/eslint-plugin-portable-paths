@@ -12,7 +12,10 @@
     "index.mjs",
     "README.md",
     "CHANGELOG.md",
-    "LICENSE"
+    "LICENSE",
+    "DESIGN.md",
+    "CONTRIBUTING.md",
+    "AGENTS.md"
   ],
   "scripts": {
     "test": "node --test",
