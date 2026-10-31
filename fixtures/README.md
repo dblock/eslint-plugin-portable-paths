@@ -16,6 +16,6 @@ Every command asserts its exit code and complete parsed JSON stdout, normalizing
 
 Runtime network connections and `fetch` are blocked. Each command compares project bytes, modes, modification times, directories, and symlink targets before and after execution. Installed dependencies must also remain unchanged. Cache files are outside the project and are the only expected runtime writes.
 
-Cases cover clean arbitrary files, binary filename collisions, directory and file-versus-directory conflicts, full Unicode folding, ESLint-ignored counterparts, explicit inventory ignores, read-only `--fix`, cache invalidation after adding a conflicting file, and invalid configuration. Canonical normalization and other filesystem-independent Unicode edge cases remain in the unit suite.
+Cases cover manual plugin/rule registration, the recommended preset, clean arbitrary files, binary filename collisions, directory and file-versus-directory conflicts, full Unicode folding, ESLint-ignored counterparts, explicit inventory ignores, read-only `--fix`, cache invalidation for both configuration styles, and invalid configuration. Additional JavaScript inputs and competing configuration filenames verify that findings appear only on the selected anchor. Canonical normalization and other filesystem-independent Unicode edge cases remain in the unit suite.
 
 Run with `npm test -- test/integration.test.mjs`. Fixture configurations are excluded from the repository's own ESLint and portability checks. `.gitattributes` preserves LF bytes on all operating systems.

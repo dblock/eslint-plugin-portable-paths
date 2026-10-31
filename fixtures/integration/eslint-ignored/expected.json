@@ -16,7 +16,7 @@
     "warningCount": 0,
     "fixableErrorCount": 0,
     "fixableWarningCount": 0,
-    "source": "import { createConfig } from \"eslint-plugin-portable-paths\";\n\nexport default [\n  { ignores: [\"*.webp\"] },\n  createConfig({ root: import.meta.dirname }),\n];\n",
+    "source": "import portablePaths from \"eslint-plugin-portable-paths\";\n\nexport default [\n  { ignores: [\"*.webp\"] },\n  {\n    plugins: { \"portable-paths\": portablePaths },\n    rules: { \"portable-paths/no-case-collisions\": \"error\" },\n  },\n];\n",
     "usedDeprecatedRules": []
   }],
   "stderr": ""

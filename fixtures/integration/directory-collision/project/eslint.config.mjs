@@ -1,3 +1,3 @@
-import { createConfig } from "eslint-plugin-portable-paths";
+import portablePaths from "eslint-plugin-portable-paths";
 
-export default [createConfig({ root: import.meta.dirname })];
+export default [portablePaths.configs.recommended];

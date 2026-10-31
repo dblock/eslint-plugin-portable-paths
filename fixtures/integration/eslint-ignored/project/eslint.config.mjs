@@ -1,6 +1,9 @@
-import { createConfig } from "eslint-plugin-portable-paths";
+import portablePaths from "eslint-plugin-portable-paths";
 
 export default [
   { ignores: ["*.webp"] },
-  createConfig({ root: import.meta.dirname }),
+  {
+    plugins: { "portable-paths": portablePaths },
+    rules: { "portable-paths/no-case-collisions": "error" },
+  },
 ];

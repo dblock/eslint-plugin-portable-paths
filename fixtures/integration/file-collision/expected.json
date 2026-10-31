@@ -16,7 +16,17 @@
     "warningCount": 0,
     "fixableErrorCount": 0,
     "fixableWarningCount": 0,
-    "source": "import { createConfig } from \"eslint-plugin-portable-paths\";\n\nexport default [createConfig({ root: import.meta.dirname })];\n",
+    "source": "import portablePaths from \"eslint-plugin-portable-paths\";\n\nexport default [{\n  plugins: { \"portable-paths\": portablePaths },\n  rules: { \"portable-paths/no-case-collisions\": \"error\" },\n}];\n",
+    "usedDeprecatedRules": []
+  }, {
+    "filePath": "<project>/src/example.js",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
     "usedDeprecatedRules": []
   }],
   "stderr": ""
