@@ -61,8 +61,10 @@ test("rejects invalid paths and options instead of silently skipping them", (con
     assert.throws(() => findCollisions([path]), /root-relative POSIX/);
   }
   assert.throws(() => findCollisions(null), /array/);
-  assert.throws(() => scanPaths(root, { ignore: ["!vendor/**"] }), /positive/);
-  assert.throws(() => scanPaths(root, { ignore: ["/absolute"] }), /positive/);
+  assert.throws(() => scanPaths(root, { ignores: ["!vendor/**"] }), /positive/);
+  assert.throws(() => scanPaths(root, { ignores: ["/absolute"] }), /positive/);
+  assert.throws(() => scanPaths(root, { ignore: [] }), /Unknown option: ignore/);
+  assert.throws(() => createConfig({ root, ignore: [] }), /Unknown option: ignore/);
   assert.throws(() => createConfig({ root, reportOn: "*.mjs" }), /literal/);
   assert.throws(() => createConfig({ root, typo: true }), /Unknown option/);
   assert.throws(() => createConfig({ root, reportOn: "missing.mjs" }), /ENOENT/);
@@ -84,8 +86,8 @@ test("scans dotfiles, binary files, empty directories, and symlinks without foll
   assert.deepEqual(scanPaths(root), [
     ".env", "Empty", "Wrong.webp", "eslint.config.mjs", "linked",
   ]);
-  assert(scanPaths(root, { ignore: [] }).includes("node_modules/Dependency.js"));
-  assert(!scanPaths(root, { ignore: ["Wrong.webp"] }).includes("Wrong.webp"));
+  assert(scanPaths(root, { ignores: [] }).includes("node_modules/Dependency.js"));
+  assert(!scanPaths(root, { ignores: ["Wrong.webp"] }).includes("Wrong.webp"));
 });
 
 test("creates one reporting anchor while scanning names ESLint need not parse", async (context) => {
@@ -150,14 +152,14 @@ test("reports one finding per group without fixes, and invalidates cached findin
   assert.equal(result.messages[0].ruleId, "portable-paths/no-case-collisions");
   assert.equal(result.messages[0].line, 1);
   assert(!result.messages.some((message) => message.fix));
-  const single = (await lint(["Logo.svg", "logo.svg"], true))[0];
+  const single = (await lint(["public/Logo.svg", "public/logo.svg"], true))[0];
   assert.equal(single.output, undefined);
   const formatter = await new ESLint({ cwd: root, overrideConfigFile: true }).loadFormatter("stylish");
   const output = stripVTControlCharacters(formatter.format([single]))
-    .replace(single.filePath, "/path/to/project/eslint.config.mjs")
+    .replace(single.filePath, "eslint.config.mjs")
     .trim();
   const readme = readFileSync(resolve(import.meta.dirname, "..", "README.md"), "utf8");
-  const documented = readme.match(/```text\n([\s\S]*?)\n```/);
+  const documented = readme.match(/Example output:\n\n```text\n([\s\S]*?)\n```/);
   assert(documented, "README must include example output.");
   assert.equal(output, documented[1].trim());
   assert.equal((await lint(["Logo.svg"]))[0].errorCount, 0);

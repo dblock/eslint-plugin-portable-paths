@@ -15,7 +15,10 @@
     "LICENSE",
     "DESIGN.md",
     "CONTRIBUTING.md",
-    "AGENTS.md"
+    "AGENTS.md",
+    "rules/no-case-collisions/README.md",
+    "API.md",
+    "DEVELOPMENT.md"
   ],
   "scripts": {
     "test": "node --test",

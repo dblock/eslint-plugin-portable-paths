@@ -7,7 +7,7 @@ Read [DESIGN.md](DESIGN.md) and [CONTRIBUTING.md](CONTRIBUTING.md) before changi
 - Work on a feature branch and open a pull request. Do not commit directly to `main`.
 - Keep each PR as one logical commit. Do not rewrite `main` history without an explicit user instruction.
 - Update `CHANGELOG.md` for changes and link the actual PR number, using `[#123](https://github.com/dblock/eslint-plugin-portable-paths/pull/123)`. Do not guess PR numbers.
-- Update directly related documentation. Document rules under the README's Rules section.
+- Update directly related documentation. Each README rule entry needs a problem-oriented description and a working configuration example, showing exclusions when supported; keep detailed guides in `rules/<rule-name>/README.md`.
 - Keep Markdown paragraphs on one line and follow the existing ESM, two-space indentation, and double-quoted strings.
 - Include `Co-authored-by: Copilot <223556219+Copilot@users.noreply.github.com>` in agent-created commits.
 

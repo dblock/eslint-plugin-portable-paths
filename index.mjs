@@ -6,7 +6,7 @@ import { TextDecoder } from "node:util";
 import picomatch from "picomatch";
 import { caseFold } from "unicode-case-folding";
 
-export const DEFAULT_IGNORE = Object.freeze([
+export const DEFAULT_IGNORES = Object.freeze([
   "**/.git/**",
   "**/node_modules/**",
 ]);
@@ -73,13 +73,13 @@ export function findCollisions(paths) {
 }
 
 export function scanPaths(root = process.cwd(), supplied = {}) {
-  options(supplied, ["ignore"]);
+  options(supplied, ["ignores"]);
   const directory = rootPath(root);
-  const ignore = supplied.ignore === undefined ? DEFAULT_IGNORE : supplied.ignore;
-  if (!Array.isArray(ignore)) {
-    throw new TypeError("ignore must be an array of positive, root-relative globs.");
+  const ignores = supplied.ignores === undefined ? DEFAULT_IGNORES : supplied.ignores;
+  if (!Array.isArray(ignores)) {
+    throw new TypeError("ignores must be an array of positive, root-relative globs.");
   }
-  const matches = ignore.map((pattern) => {
+  const matches = ignores.map((pattern) => {
     if (
       typeof pattern !== "string" ||
       !pattern.trim() ||
@@ -90,7 +90,7 @@ export function scanPaths(root = process.cwd(), supplied = {}) {
       pattern.split("/").includes("..") ||
       picomatch.scan(pattern).negated
     ) {
-      throw new TypeError("ignore must contain positive, root-relative globs.");
+      throw new TypeError("ignores must contain positive, root-relative globs.");
     }
     return picomatch(pattern, {
       dot: true,
@@ -144,7 +144,7 @@ const ruleMeta = {
   type: "problem",
   docs: {
     description: "Detect case-insensitive and Unicode-normalization path collisions.",
-    url: "https://github.com/dblock/eslint-plugin-portable-paths#no-case-collisions",
+    url: "https://github.com/dblock/eslint-plugin-portable-paths/blob/main/rules/no-case-collisions/README.md",
   },
   schema: [{
     type: "object",
@@ -164,7 +164,7 @@ const ruleMeta = {
     additionalProperties: false,
   }],
   messages: {
-    collision: "Paths collide under NFC normalization and Unicode case folding: {{paths}}.",
+    collision: "Conflicting paths: {{paths}}.",
   },
 };
 
@@ -224,11 +224,11 @@ plugin.configs.recommended = {
 };
 
 export function createConfig(supplied = {}) {
-  options(supplied, ["root", "ignore", "reportOn"]);
+  options(supplied, ["root", "ignores", "reportOn"]);
   const root = rootPath(supplied.root === undefined ? process.cwd() : supplied.root);
   const reportOn = supplied.reportOn === undefined ? "eslint.config.mjs" : supplied.reportOn;
   const anchor = reportingPath(root, reportOn);
-  const collisions = findCollisions(scanPaths(root, { ignore: supplied.ignore }));
+  const collisions = findCollisions(scanPaths(root, { ignores: supplied.ignores }));
   return {
     name: "portable-paths/no-case-collisions",
     basePath: root,
