@@ -1,6 +1,6 @@
 # Programmatic API
 
-The package exports `scanPaths`, `findCollisions`, `createConfig`, and `DEFAULT_IGNORES`. Importing them does not scan the filesystem.
+The package exports `scanPaths`, `findCollisions`, `findWindowsInvalidNames`, `createConfig`, and `DEFAULT_IGNORES`. Importing them does not scan the filesystem.
 
 ## scanPaths
 
@@ -25,6 +25,17 @@ const collisions = findCollisions(scanPaths("/path/to/project"));
 
 Accepts an array of root-relative POSIX paths, infers all directory prefixes, deduplicates exact entries, and returns deterministic groups of conflicting original spellings. It does not read or mutate the filesystem. Invalid paths are errors. See the [rule guide](src/rules/no-case-collisions/README.md#what-it-catches) for examples and [DESIGN.md](DESIGN.md#collision-groups) for the comparison algorithm.
 
+## findWindowsInvalidNames
+
+```js
+import { findWindowsInvalidNames, scanPaths } from "eslint-plugin-portable-paths";
+
+const invalidNames = findWindowsInvalidNames(scanPaths("/path/to/project"));
+// An example finding: { path: "NUL.txt", reasons: ["reserved device name"] }.
+```
+
+Returns deterministic `{ path, reasons }` records for invalid file and directory names, inferring and deduplicating directory prefixes. Reasons are `reserved device name`, `forbidden characters`, and `trailing space or period`, in that order. Logical POSIX names may contain Windows-invalid characters such as `:` and `\`; those are findings rather than malformed-path errors. Lengths are not checked. See the [rule guide](src/rules/no-windows-invalid-names/README.md).
+
 ## createConfig
 
 ```js
@@ -37,7 +48,7 @@ export default [createConfig({
 })];
 ```
 
-Returns a flat configuration with a scoped plugin registration, one reporting anchor, and an explicit collision snapshot. Use it for custom roots, inventory exclusions, reporting files, or programmatic ESLint callers whose `cwd` differs from the process working directory.
+Returns a flat configuration enabling both rules with a scoped plugin registration, one reporting anchor, and explicit collision and invalid-name snapshots from one scan. Use it for custom roots, inventory exclusions, reporting files, or programmatic ESLint callers whose `cwd` differs from the process working directory.
 
 | Option | Default | Meaning |
 | --- | --- | --- |

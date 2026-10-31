@@ -1,0 +1,18 @@
+{
+  "steps": [
+    {
+      "command": ["eslint", ".", "--cache", "--cache-location", "<cache>", "--format", "json"],
+      "expected": "clean.json"
+    },
+    {
+      "files": [{ "path": "NUL.txt", "bytes": [0, 255, 0] }],
+      "command": ["eslint", ".", "--cache", "--cache-location", "<cache>", "--format", "json"],
+      "expected": "invalid.json"
+    },
+    {
+      "removeFiles": ["NUL.txt"],
+      "command": ["eslint", ".", "--cache", "--cache-location", "<cache>", "--format", "json"],
+      "expected": "clean.json"
+    }
+  ]
+}

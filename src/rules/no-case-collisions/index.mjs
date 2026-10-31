@@ -1,23 +1,9 @@
-import { lstatSync } from "node:fs";
-import { basename, dirname, isAbsolute, join, resolve } from "node:path";
-import process from "node:process";
 import { caseFold } from "unicode-case-folding";
-import { relativePath, reportingPath, rootPath, scanPaths } from "../../paths.mjs";
+import { defaultSnapshot, isReportingFile, pathInventory } from "../../paths.mjs";
 
 export function findCollisions(paths) {
-  if (!Array.isArray(paths)) {
-    throw new TypeError("paths must be an array.");
-  }
-  const inventory = new Set();
-  for (const path of paths) {
-    relativePath(path);
-    const parts = path.split("/");
-    for (let length = 1; length <= parts.length; length++) {
-      inventory.add(parts.slice(0, length).join("/"));
-    }
-  }
   const groups = new Map();
-  for (const path of [...inventory].sort()) {
+  for (const path of pathInventory(paths)) {
     const key = caseFold(path.normalize("NFC")).normalize("NFC");
     const group = groups.get(key);
     if (group) group.push(path);
@@ -59,29 +45,16 @@ const rule = {
     ...ruleMeta,
     // ESLint applies defaults before computing its cache key, even for cached files.
     get defaultOptions() {
-      const root = rootPath(process.cwd());
-      const paths = scanPaths(root);
-      const reportOn = ["eslint.config.js", "eslint.config.mjs", "eslint.config.cjs"]
-        .find((name) => paths.includes(name) && lstatSync(join(root, name)).isFile());
-      if (!reportOn) {
-        throw new TypeError("No reporting anchor at the working directory. Use createConfig({ root, reportOn }) for a custom root or anchor.");
-      }
+      const { anchor, paths } = defaultSnapshot();
       return [{
-        anchor: reportingPath(root, reportOn),
+        anchor,
         collisions: findCollisions(paths),
       }];
     },
   },
   create(context) {
-    if (!context.options[0]) {
-      throw new TypeError("Filesystem snapshot defaults require ESLint 9.39 or newer.");
-    }
-    const { collisions, anchor = join(context.cwd, "eslint.config.mjs") } = context.options[0];
-    if (!isAbsolute(anchor) || !anchor.isWellFormed() || anchor.includes("\0")) {
-      throw new TypeError("Snapshot anchor must be an absolute JavaScript file path.");
-    }
-    reportingPath(dirname(anchor), basename(anchor));
-    if (resolve(context.filename) !== anchor) return {};
+    if (!isReportingFile(context)) return {};
+    const { collisions } = context.options[0];
     return {
       Program() {
         for (const paths of collisions) {

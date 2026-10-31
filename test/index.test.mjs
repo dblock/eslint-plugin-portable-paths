@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
-import { writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { mkdirSync, writeFileSync } from "node:fs";
+import { join, toNamespacedPath } from "node:path";
 import { test } from "node:test";
 import { ESLint } from "eslint";
-import plugin, { createConfig, findCollisions } from "../src/index.mjs";
+import plugin, { createConfig, DEFAULT_IGNORES, findCollisions } from "../src/index.mjs";
 import { fixture } from "./fixture.mjs";
 
 test("rejects invalid configuration options instead of silently skipping them", (context) => {
@@ -47,9 +47,28 @@ test("composes the recommended preset with normal registration and a namespace a
       },
     ],
   });
+
   const results = await eslint.lintFiles(["."]);
   assert.equal(results.length, 2);
   assert.equal(results.reduce((count, result) => count + result.warningCount, 0), 1);
   assert.equal(results.reduce((count, result) => count + result.errorCount, 0), 0);
   assert.equal(results.find((result) => result.warningCount).messages[0].ruleId, "paths/no-case-collisions");
+});
+
+test("scans a custom root for both rules while respecting plugin-wide ignores", async (context) => {
+  const { directory, root } = fixture(context);
+  writeFileSync(toNamespacedPath(join(root, "NUL.txt")), new Uint8Array([0, 255]));
+  mkdirSync(join(root, "vendor"));
+  writeFileSync(toNamespacedPath(join(root, "vendor", "CON.txt")), "");
+  writeFileSync(join(root, "other.mjs"), "export default 1;\n");
+  const config = createConfig({ root, ignores: [...DEFAULT_IGNORES, "vendor/**"] });
+  const eslint = new ESLint({
+    cwd: directory, overrideConfigFile: true, overrideConfig: [config],
+  });
+  const results = await eslint.lintFiles(["project"]);
+  assert.equal(results.length, 2);
+  const messages = results.flatMap((result) => result.messages);
+  assert.equal(messages.length, 1);
+  assert.equal(messages[0].ruleId, "portable-paths/no-windows-invalid-names");
+  assert.equal(messages[0].message, 'Invalid Windows name: "NUL.txt" (reserved device name).');
 });

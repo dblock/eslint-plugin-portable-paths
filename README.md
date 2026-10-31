@@ -9,6 +9,7 @@ ESLint checks for portable file and directory names, especially useful when deve
 - Catch filenames like `Logo.svg` and `logo.svg` that can overwrite each other on case-insensitive filesystems.
 - Find directory clashes like `Src/` and `src/`, or a `ReadMe` file conflicting with a directory named `readme/`.
 - Catch the same accented filename stored in two different ways, even when both names look identical.
+- Catch names such as `NUL.txt`, `image?.png`, and `assets.` that cause problems on Windows.
 
 ## Installation
 
@@ -28,12 +29,15 @@ import portablePaths from "eslint-plugin-portable-paths";
 export default [
   {
     plugins: { "portable-paths": portablePaths },
-    rules: { "portable-paths/no-case-collisions": "error" },
+    rules: {
+      "portable-paths/no-case-collisions": "error",
+      "portable-paths/no-windows-invalid-names": "error",
+    },
   },
 ];
 ```
 
-Or use the recommended preset, which registers the plugin and enables its rule:
+Or use the recommended preset, which registers the plugin and enables both rules:
 
 ```js
 import portablePaths from "eslint-plugin-portable-paths";
@@ -56,7 +60,7 @@ eslint.config.mjs
 ✖ 1 problem (1 error, 0 warnings)
 ```
 
-Findings are reported on the configuration file; its project path is omitted above. Keep that file included and unignored. This rule reports collisions but does not offer autofixes. The example requires a filesystem that retains both spellings.
+Findings are reported on the configuration file; its project path is omitted above. Keep that file included and unignored. Both rules report problems without autofixes. The collision example requires a filesystem that retains both spellings.
 
 ## Configuration
 
@@ -90,6 +94,21 @@ export default [{
 ```
 
 See the [rule guide](src/rules/no-case-collisions/README.md) for more examples and details.
+
+### [no-windows-invalid-names](src/rules/no-windows-invalid-names/README.md)
+
+Detect file and directory names that can be created on macOS or Linux but cause problems for ordinary Windows applications: reserved device names such as `CON` and `NUL.txt`, forbidden characters such as `?` and `:`, and names ending in spaces or periods. Name and path lengths are not checked.
+
+```js
+import portablePaths from "eslint-plugin-portable-paths";
+
+export default [{
+  plugins: { "portable-paths": portablePaths },
+  rules: { "portable-paths/no-windows-invalid-names": "error" },
+}];
+```
+
+See the [rule guide](src/rules/no-windows-invalid-names/README.md) for details and the [plugin-wide configuration](#configuration) to exclude paths.
 
 ## Contributing
 

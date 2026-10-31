@@ -1,0 +1,23 @@
+{
+  "exitCode": 1,
+  "stdout": [{
+    "filePath": "<project>/eslint.config.mjs",
+    "messages": [{
+      "ruleId": "portable-paths/no-windows-invalid-names",
+      "severity": 2,
+      "message": "Invalid Windows name: \"NUL.txt\" (reserved device name).",
+      "line": 1,
+      "column": 1,
+      "messageId": "invalidName"
+    }],
+    "suppressedMessages": [],
+    "errorCount": 1,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "source": "import { createConfig, DEFAULT_IGNORES } from \"eslint-plugin-portable-paths\";\n\nexport default [createConfig({\n  root: import.meta.dirname,\n  ignores: [...DEFAULT_IGNORES, \"vendor/**\"],\n})];\n",
+    "usedDeprecatedRules": []
+  }],
+  "stderr": ""
+}
