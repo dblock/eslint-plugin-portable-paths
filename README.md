@@ -4,6 +4,8 @@
 [![Node.js](https://img.shields.io/badge/node-%3E%3D22.18-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
+![Portable Paths: a googly-eyed folder in enormous green clogs stepping over a backslash-shaped banana peel.](assets/logo.svg)
+
 ESLint checks for portable file and directory names, especially useful when developers work on the same code across Windows, macOS, and Linux.
 
 - Catch filenames like `Logo.svg` and `logo.svg` that can overwrite each other on case-insensitive filesystems.

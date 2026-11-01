@@ -10,6 +10,7 @@
   },
   "files": [
     "src",
+    "assets/logo.svg",
     "README.md",
     "CHANGELOG.md",
     "LICENSE",
