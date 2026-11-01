@@ -1,6 +1,6 @@
 # Programmatic API
 
-The package exports `scanPaths`, `findCollisions`, `findWindowsInvalidNames`, `createConfig`, and `DEFAULT_IGNORES`. Importing them does not scan the filesystem.
+The package exports `scanPaths`, `findCollisions`, `findWindowsInvalidNames`, `findLongPaths`, `createConfig`, and `DEFAULT_IGNORES`. Importing them does not scan the filesystem.
 
 ## scanPaths
 
@@ -36,6 +36,17 @@ const invalidNames = findWindowsInvalidNames(scanPaths("/path/to/project"));
 
 Returns deterministic `{ path, reasons }` records for invalid file and directory names, inferring and deduplicating directory prefixes. Reasons are `reserved device name`, `forbidden characters`, and `trailing space or period`, in that order. Logical POSIX names may contain Windows-invalid characters such as `:` and `\`; those are findings rather than malformed-path errors. Lengths are not checked. See the [rule guide](src/rules/no-windows-invalid-names/README.md).
 
+## findLongPaths
+
+```js
+import { findLongPaths, scanPaths } from "eslint-plugin-portable-paths";
+
+const longPaths = findLongPaths(scanPaths("/path/to/project"), { max: 20, maxNameBytes: 255 });
+// An example finding: { path: "assets/nested/image.webp", length: 24, nameBytes: 10 }.
+```
+
+Returns deterministic `{ path, length, nameBytes }` records when either supplied budget is exceeded. `length` counts original relative-path UTF-16 units; `nameBytes` counts the final component's UTF-8 bytes. Options are `max` and `maxNameBytes`; at least one positive integer budget is required. Directory prefixes participate and exact duplicates are removed. Absolute checkout locations, trailing directory separators, and symlink targets are not counted. See the [rule guide](src/rules/max-pathname-length/README.md).
+
 ## createConfig
 
 ```js
@@ -48,7 +59,7 @@ export default [createConfig({
 })];
 ```
 
-Returns a flat configuration enabling both rules with a scoped plugin registration, one reporting anchor, and explicit collision and invalid-name snapshots from one scan. Use it for custom roots, inventory exclusions, reporting files, or programmatic ESLint callers whose `cwd` differs from the process working directory.
+Returns a flat configuration enabling the collision and Windows-name checks with a scoped plugin registration, one reporting anchor, and explicit snapshots from one scan. The optional length rule is registered with static inventory defaults but not enabled without a user-supplied limit. Use the helper for custom roots, inventory exclusions, reporting files, or programmatic ESLint callers whose `cwd` differs from the process working directory.
 
 | Option | Default | Meaning |
 | --- | --- | --- |
@@ -57,5 +68,17 @@ Returns a flat configuration enabling both rules with a scoped plugin registrati
 | `reportOn` | `eslint.config.mjs` | Existing regular JavaScript file, using a literal, root-relative POSIX path. |
 
 The anchor must be included in the ESLint invocation and not ignored. Do not combine this scoped registration with the default plugin or recommended preset under the same namespace.
+
+Enable a path-length budget on the helper's own configuration:
+
+```js
+import { createConfig } from "eslint-plugin-portable-paths";
+
+const config = createConfig({ root: import.meta.dirname });
+config.rules["portable-paths/max-pathname-length"] = ["error", { max: 200, maxNameBytes: 255 }];
+export default [config];
+```
+
+The optional rule uses the helper's captured inventory and anchor, preserving explicit roots and ignores without evaluating working-directory scan defaults. Supply either budget or both and keep the rule on the same configuration so the plugin registration and reporting-file selection apply together.
 
 Each evaluation scans once. Rebuild the configuration after path changes in long-lived integrations. See [caching and lifecycle](src/rules/no-case-collisions/README.md#caching-and-long-lived-processes) for details.

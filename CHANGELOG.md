@@ -2,6 +2,7 @@
 
 ## 0.1.0 (Unreleased)
 
+- [#6](https://github.com/dblock/eslint-plugin-portable-paths/pull/6): Add opt-in `max-pathname-length` with independent relative-path UTF-16 and filename UTF-8 byte budgets, cache-safe snapshots, and support for custom roots and inventory ignores without autofixes - [@dblock](https://github.com/dblock).
 - [#5](https://github.com/dblock/eslint-plugin-portable-paths/pull/5): Add `no-windows-invalid-names` for reserved devices, forbidden characters, and trailing spaces or periods; enable it in the recommended preset and configuration helper without length checks or autofixes - [@dblock](https://github.com/dblock).
 - [#4](https://github.com/dblock/eslint-plugin-portable-paths/pull/4): Run CI on pull requests and pushes to `main`, avoiding duplicate runs for upstream feature branches - [@dblock](https://github.com/dblock).
 - [#4](https://github.com/dblock/eslint-plugin-portable-paths/pull/4): Organize runtime code under `src/` and mirror its layout in `test/`; colocate the `no-case-collisions` implementation and guide in `src/rules/no-case-collisions/` while preserving public exports - [@dblock](https://github.com/dblock).

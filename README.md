@@ -10,6 +10,7 @@ ESLint checks for portable file and directory names, especially useful when deve
 - Find directory clashes like `Src/` and `src/`, or a `ReadMe` file conflicting with a directory named `readme/`.
 - Catch the same accented filename stored in two different ways, even when both names look identical.
 - Catch names such as `NUL.txt`, `image?.png`, and `assets.` that cause problems on Windows.
+- Set path and filename-size budgets, leaving room for checkout folders and avoiding oversized Unicode names.
 
 ## Installation
 
@@ -37,7 +38,7 @@ export default [
 ];
 ```
 
-Or use the recommended preset, which registers the plugin and enables both rules:
+Or use the recommended preset, which registers the plugin and enables the collision and Windows-name checks:
 
 ```js
 import portablePaths from "eslint-plugin-portable-paths";
@@ -60,7 +61,7 @@ eslint.config.mjs
 ✖ 1 problem (1 error, 0 warnings)
 ```
 
-Findings are reported on the configuration file; its project path is omitted above. Keep that file included and unignored. Both rules report problems without autofixes. The collision example requires a filesystem that retains both spellings.
+Findings are reported on the configuration file; its project path is omitted above. Keep that file included and unignored. Rules report problems without autofixes. The collision example requires a filesystem that retains both spellings.
 
 ## Configuration
 
@@ -109,6 +110,23 @@ export default [{
 ```
 
 See the [rule guide](src/rules/no-windows-invalid-names/README.md) for details and the [plugin-wide configuration](#configuration) to exclude paths.
+
+### [max-pathname-length](src/rules/max-pathname-length/README.md)
+
+Reject project-relative paths or individual file and directory names exceeding your chosen budgets. `max` counts full relative paths in UTF-16 code units, excluding the checkout location; `maxNameBytes` counts each name in UTF-8 bytes. Set either option or both.
+
+```js
+import portablePaths from "eslint-plugin-portable-paths";
+
+export default [{
+  plugins: { "portable-paths": portablePaths },
+  rules: {
+    "portable-paths/max-pathname-length": ["error", { max: 200, maxNameBytes: 255 }],
+  },
+}];
+```
+
+This rule is opt-in and is not enabled by the recommended preset. The example budgets leave room for checkout folders and common filesystem name limits, not a universal compatibility guarantee. See the [rule guide](src/rules/max-pathname-length/README.md) for details and configuration with [inventory exclusions](#configuration).
 
 ## Contributing
 

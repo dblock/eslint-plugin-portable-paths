@@ -22,4 +22,6 @@ Cases cover manual plugin/rule registration, the recommended preset, clean arbit
 
 Windows-name cases cover direct registration, reserved binary filenames, trailing-period directories and descendants, cache invalidation when a reserved name appears and disappears, helper inventory ignores, and read-only `--fix` and `--fix-dry-run`. These do not require case-distinct filenames and run on local filesystems as well as every GitHub runner.
 
+Pathname-length cases cover direct registration, exact-limit binary paths, one-over-limit findings, additional JavaScript inputs without duplicate reports, preset composition, cache invalidation when a long path appears and disappears, helper inventory ignores, required-budget validation, and read-only fix/dry-run execution. Unicode binary filename cases verify independent UTF-16 path and UTF-8 component-byte measurements, name-only configuration, and one combined diagnostic when both budgets are exceeded. Temporary absolute checkout locations are excluded from reported lengths.
+
 Run with `npm test -- test/integration.test.mjs`. Fixture configurations are excluded from the repository's own ESLint and portability checks. `.gitattributes` preserves LF bytes on all operating systems.

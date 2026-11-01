@@ -4,15 +4,19 @@ import rule, { findCollisions, snapshotRule } from "./rules/no-case-collisions/i
 import windowsRule, {
   findWindowsInvalidNames, snapshotRule as windowsSnapshotRule,
 } from "./rules/no-windows-invalid-names/index.mjs";
+import pathLengthRule, {
+  findLongPaths, createSnapshotRule as createPathLengthSnapshotRule,
+} from "./rules/max-pathname-length/index.mjs";
 
 export { DEFAULT_IGNORES, scanPaths } from "./paths.mjs";
-export { findCollisions, findWindowsInvalidNames };
+export { findCollisions, findWindowsInvalidNames, findLongPaths };
 
 const plugin = {
   meta: { name: "eslint-plugin-portable-paths", version: "0.1.0" },
   rules: {
     "no-case-collisions": rule,
     "no-windows-invalid-names": windowsRule,
+    "max-pathname-length": pathLengthRule,
   },
   configs: {},
 };
@@ -45,6 +49,7 @@ export function createConfig(supplied = {}) {
         rules: {
           "no-case-collisions": { ...snapshotRule },
           "no-windows-invalid-names": { ...windowsSnapshotRule },
+          "max-pathname-length": createPathLengthSnapshotRule({ anchor, paths }),
         },
       },
     },

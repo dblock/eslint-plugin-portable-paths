@@ -1,0 +1,9 @@
+{
+  "files": [
+    { "path": "assets/12345678.webp", "bytes": [0, 255] },
+    { "path": "assets/nested/image.webp", "bytes": [0, 255] },
+    { "path": "vendor/nested/image.webp", "bytes": [0, 255] }
+  ],
+  "command": ["eslint", ".", "--format", "json"],
+  "expected": "expected.json"
+}
