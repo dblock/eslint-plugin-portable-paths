@@ -33,7 +33,7 @@ export default [{
 }];
 ```
 
-The recommended preset enables both rules:
+The recommended preset enables the collision and Windows-name checks:
 
 ```js
 import portablePaths from "eslint-plugin-portable-paths";
@@ -61,7 +61,7 @@ Normal registration scans the process working directory and selects the first ex
 
 Keep the anchor included and unignored. A narrowed invocation such as `eslint src/` misses the project-wide check if it omits the anchor.
 
-Use [createConfig()](../../../API.md#createconfig) for a custom root or reporting file. It enables both rules, scans once, respects inventory ignores, and defaults its anchor to `eslint.config.mjs`. Do not combine its scoped registration with the default plugin under the same namespace.
+Use [createConfig()](../../../API.md#createconfig) for a custom root or reporting file. It enables the collision and Windows-name checks, scans once, respects inventory ignores, and defaults its anchor to `eslint.config.mjs`. Do not combine its scoped registration with the default plugin under the same namespace.
 
 Rule snapshot defaults participate in ESLint's cache key. A fresh CLI invocation with `--cache` rechecks an unchanged anchor when an invalid filename appears or disappears. Editors and long-lived integrations must rebuild configuration after path changes.
 

@@ -1,0 +1,8 @@
+{
+  "files": [{
+    "path": "assets/photo\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00.webp",
+    "bytes": [0, 255]
+  }],
+  "command": ["eslint", ".", "--format", "json"],
+  "expected": "expected.json"
+}

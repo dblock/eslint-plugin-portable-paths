@@ -1,0 +1,33 @@
+{
+  "exitCode": 1,
+  "stdout": [{
+    "filePath": "<project>/eslint.config.mjs",
+    "messages": [{
+      "ruleId": "portable-paths/max-pathname-length",
+      "severity": 2,
+      "message": "Path too long: \"assets/nested/image.webp\" (24 > 20).",
+      "line": 1,
+      "column": 1,
+      "messageId": "tooLong"
+    }],
+    "suppressedMessages": [],
+    "errorCount": 1,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "source": "import portablePaths from \"eslint-plugin-portable-paths\";\n\nexport default [{\n  plugins: { \"portable-paths\": portablePaths },\n  rules: { \"portable-paths/max-pathname-length\": [\"error\", { max: 20 }] },\n}];\n",
+    "usedDeprecatedRules": []
+  }, {
+    "filePath": "<project>/other.mjs",
+    "messages": [],
+    "suppressedMessages": [],
+    "errorCount": 0,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "usedDeprecatedRules": []
+  }],
+  "stderr": ""
+}

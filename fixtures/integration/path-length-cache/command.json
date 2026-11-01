@@ -1,0 +1,19 @@
+{
+  "files": [{ "path": "assets/12345678.webp", "bytes": [0, 255] }],
+  "steps": [
+    {
+      "command": ["eslint", ".", "--cache", "--cache-location", "<cache>", "--format", "json"],
+      "expected": "clean.json"
+    },
+    {
+      "files": [{ "path": "assets/nested/image.webp", "bytes": [0, 255] }],
+      "command": ["eslint", ".", "--cache", "--cache-location", "<cache>", "--format", "json"],
+      "expected": "long.json"
+    },
+    {
+      "removeFiles": ["assets/nested/image.webp"],
+      "command": ["eslint", ".", "--cache", "--cache-location", "<cache>", "--format", "json"],
+      "expected": "clean.json"
+    }
+  ]
+}

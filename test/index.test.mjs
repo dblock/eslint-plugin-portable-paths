@@ -72,3 +72,30 @@ test("scans a custom root for both rules while respecting plugin-wide ignores", 
   assert.equal(messages[0].ruleId, "portable-paths/no-windows-invalid-names");
   assert.equal(messages[0].message, 'Invalid Windows name: "NUL.txt" (reserved device name).');
 });
+
+test("opts into path lengths with a custom root, anchor, and ignored inventory", async (context) => {
+  const { directory, root } = fixture(context);
+  for (const parent of ["assets/nested", "vendor/nested"]) {
+    mkdirSync(join(root, ...parent.split("/")), { recursive: true });
+    writeFileSync(join(root, ...parent.split("/"), "image.webp"), new Uint8Array([0, 255]));
+  }
+  mkdirSync(join(root, "a-very-long-directory"));
+  mkdirSync(join(root, "tools"));
+  writeFileSync(join(root, "tools", "report.js"), "export default [];\n");
+  const config = createConfig({
+    root, reportOn: "tools/report.js", ignores: [...DEFAULT_IGNORES, "vendor/**"],
+  });
+  const lint = () => new ESLint({
+    cwd: directory, overrideConfigFile: true, overrideConfig: [config],
+  }).lintFiles(["project"]);
+  assert.equal((await lint()).flatMap((result) => result.messages).length, 0);
+  config.rules["portable-paths/max-pathname-length"] = ["error", { max: 20 }];
+  const results = await lint();
+  const findings = results.filter((result) => result.errorCount);
+  assert.equal(findings.length, 1);
+  assert.equal(findings[0].filePath, join(root, "tools", "report.js"));
+  assert.deepEqual(findings[0].messages.map((message) => message.message), [
+    'Path too long: "a-very-long-directory" (21 > 20).',
+    'Path too long: "assets/nested/image.webp" (24 > 20).',
+  ]);
+});

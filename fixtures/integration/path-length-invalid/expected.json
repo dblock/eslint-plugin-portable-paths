@@ -1,0 +1,5 @@
+{
+  "exitCode": 2,
+  "stdout": "",
+  "stderrPattern": "required property '\\.?max'[\\s\\S]*required property '\\.?maxNameBytes'[\\s\\S]*anyOf"
+}

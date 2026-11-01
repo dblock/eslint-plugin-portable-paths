@@ -31,7 +31,7 @@ export default [{
 }];
 ```
 
-The recommended preset registers the plugin and enables both rules, including this one:
+The recommended preset registers the plugin and enables the collision and Windows-name checks:
 
 ```js
 import portablePaths from "eslint-plugin-portable-paths";
@@ -62,7 +62,7 @@ export default [createConfig({
 })];
 ```
 
-The helper enables both rules. Its `root` defaults to the current working directory and `reportOn` defaults to `eslint.config.mjs`. The reporting file must exist and be a regular JavaScript file, named using a literal, root-relative POSIX path rather than a glob.
+The helper enables the collision and Windows-name checks. Its `root` defaults to the current working directory and `reportOn` defaults to `eslint.config.mjs`. The reporting file must exist and be a regular JavaScript file, named using a literal, root-relative POSIX path rather than a glob.
 
 Programmatic callers with an ESLint `cwd` different from the process working directory should use the helper with an explicit `root`. Its scoped plugin registration must not be combined with the default plugin or preset under the same namespace.
 

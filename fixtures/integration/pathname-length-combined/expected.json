@@ -1,0 +1,23 @@
+{
+  "exitCode": 1,
+  "stdout": [{
+    "filePath": "<project>/eslint.config.mjs",
+    "messages": [{
+      "ruleId": "portable-paths/max-pathname-length",
+      "severity": 2,
+      "message": "Path and name too long: \"assets/photo\ud83d\ude00\ud83d\ude00\ud83d\ude00\ud83d\ude00.webp\" (path 25 > 24; name 26 bytes > 25).",
+      "line": 1,
+      "column": 1,
+      "messageId": "bothTooLong"
+    }],
+    "suppressedMessages": [],
+    "errorCount": 1,
+    "fatalErrorCount": 0,
+    "warningCount": 0,
+    "fixableErrorCount": 0,
+    "fixableWarningCount": 0,
+    "source": "import portablePaths from \"eslint-plugin-portable-paths\";\n\nexport default [{\n  plugins: { \"portable-paths\": portablePaths },\n  rules: {\n    \"portable-paths/max-pathname-length\": [\"error\", { max: 24, maxNameBytes: 25 }],\n  },\n}];\n",
+    "usedDeprecatedRules": []
+  }],
+  "stderr": ""
+}

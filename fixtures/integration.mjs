@@ -117,6 +117,8 @@ export function createConsumer(context) {
   assert(archive.files.some((file) => file.path === "src/rules/no-case-collisions/README.md"));
   assert(archive.files.some((file) => file.path === "src/rules/no-windows-invalid-names/index.mjs"));
   assert(archive.files.some((file) => file.path === "src/rules/no-windows-invalid-names/README.md"));
+  assert(archive.files.some((file) => file.path === "src/rules/max-pathname-length/index.mjs"));
+  assert(archive.files.some((file) => file.path === "src/rules/max-pathname-length/README.md"));
   assert(!archive.files.some((file) => /^(?:test|fixtures)\//.test(file.path)));
   const sourceRequire = createRequire(join(source, "package.json"));
   const eslint = JSON.parse(readFileSync(sourceRequire.resolve("eslint/package.json"), "utf8"));
