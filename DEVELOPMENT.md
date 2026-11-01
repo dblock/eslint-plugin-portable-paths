@@ -28,7 +28,7 @@ npm test -- test/rules/no-case-collisions/index.test.mjs
 npm test -- test/integration.test.mjs
 ```
 
-The package remains private until publication is explicitly prepared. Keep the archive limited to the runtime implementation and linked documentation; do not ship test fixtures or development dependencies.
+Keep the archive limited to the runtime implementation, README logo, and linked documentation; do not ship test fixtures or development dependencies. See [RELEASING.md](RELEASING.md) for publication.
 
 The [ESLint](examples/eslint) and [Oxlint](examples/oxlint) examples are independent projects, each with its own manifest, lockfile, and installed plugin dependency. Run `npm ci` and `npm run lint` inside each example directory; the repository-root install is not required. `.npmrc` enables `install-links` to install the local plugin as a package with its own runtime dependencies.
 

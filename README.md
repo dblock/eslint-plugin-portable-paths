@@ -1,6 +1,7 @@
 # eslint-plugin-portable-paths
 
 [![CI](https://github.com/dblock/eslint-plugin-portable-paths/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/dblock/eslint-plugin-portable-paths/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/eslint-plugin-portable-paths.svg)](https://www.npmjs.com/package/eslint-plugin-portable-paths)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D22.18-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
@@ -16,10 +17,10 @@ ESLint checks for portable file and directory names, especially useful when deve
 
 ## Installation
 
-Requires Node.js 22.18+ and ESLint 9.39+ or 10.x. This repository is not published to npm yet. To try the GitHub version:
+Requires Node.js 22.18+ and ESLint 9.39+ or 10.x.
 
 ```sh
-npm install --save-dev eslint github:dblock/eslint-plugin-portable-paths
+npm install --save-dev eslint eslint-plugin-portable-paths
 ```
 
 ## Usage
@@ -136,7 +137,7 @@ Try the self-contained [ESLint example](examples/eslint) or [Oxlint example](exa
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidance, [DEVELOPMENT.md](DEVELOPMENT.md) for setup and checks, [DESIGN.md](DESIGN.md) for the architecture, and [AGENTS.md](AGENTS.md) for automated contributor instructions.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidance, [DEVELOPMENT.md](DEVELOPMENT.md) for setup and checks, [DESIGN.md](DESIGN.md) for the architecture, [RELEASING.md](RELEASING.md) for releases, and [AGENTS.md](AGENTS.md) for automated contributor instructions.
 
 ## License
 
