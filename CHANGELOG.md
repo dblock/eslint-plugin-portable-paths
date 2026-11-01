@@ -1,7 +1,8 @@
 # Changelog
 
-## 0.1.0 (Unreleased)
+## 0.1.0 (2026-10-31)
 
+- [#9](https://github.com/dblock/eslint-plugin-portable-paths/pull/9): Prepare the first npm release and document the maintainer release process - [@dblock](https://github.com/dblock).
 - [#8](https://github.com/dblock/eslint-plugin-portable-paths/pull/8): Add a googly-eyed folder logo with oversized green clogs and a backslash-shaped banana peel, shared by the README and examples - [@dblock](https://github.com/dblock).
 - [#7](https://github.com/dblock/eslint-plugin-portable-paths/pull/7): Add self-contained ESLint and Oxlint examples with independent dependencies, lockfiles, cross-platform linting CI, and all three portability rules - [@dblock](https://github.com/dblock).
 - [#6](https://github.com/dblock/eslint-plugin-portable-paths/pull/6): Add opt-in `max-pathname-length` with independent relative-path UTF-16 and filename UTF-8 byte budgets, cache-safe snapshots, and support for custom roots and inventory ignores without autofixes - [@dblock](https://github.com/dblock).

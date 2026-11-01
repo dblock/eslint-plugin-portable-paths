@@ -18,7 +18,7 @@ Set the length budgets in `portable-paths.mjs`. Oxlint validates a rule's defaul
 
 The inventory includes `public/logo.svg` even though Oxlint does not parse SVG files. No processor is needed: these rules inspect the filesystem, not the files visited by the linter. The clean example succeeds without findings. Add an over-budget asset path, a Windows-invalid name, or a case-only collision to see diagnostics. Some names require a suitable filesystem; case-insensitive filesystems cannot retain case-only collisions.
 
-This example has its own manifest and lockfile; no repository-root dependency installation is needed. Its `file:../..` dependency installs the checkout's plugin as a package, and `.npmrc` enables `install-links` so the plugin's runtime dependencies are installed here rather than relying on a source symlink. To use the example outside this checkout before npm publication, replace that dependency with `github:dblock/eslint-plugin-portable-paths` and run `npm install`.
+This example has its own manifest and lockfile; no repository-root dependency installation is needed. Its `file:../..` dependency installs the checkout's plugin as a package, and `.npmrc` enables `install-links` so the plugin's runtime dependencies are installed here rather than relying on a source symlink. To use the example outside this checkout, replace that dependency with a published version such as `0.1.0` and run `npm install`.
 
 Default inventory exclusions skip `.git` and `node_modules`; the length budgets are examples, not universal compatibility guarantees. The separate [Examples CI workflow](../../.github/workflows/examples.yml) installs and lints this example on Linux, macOS, and Windows.
 

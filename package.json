@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "description": "ESLint checks for portable filesystem paths.",
   "type": "module",
-  "private": true,
   "exports": {
     ".": "./src/index.mjs",
     "./package.json": "./package.json"
@@ -18,7 +17,8 @@
     "CONTRIBUTING.md",
     "AGENTS.md",
     "API.md",
-    "DEVELOPMENT.md"
+    "DEVELOPMENT.md",
+    "RELEASING.md"
   ],
   "scripts": {
     "test": "node --test",
