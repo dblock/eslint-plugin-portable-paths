@@ -1,1 +1,52 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 512 512" role="img" aria-labelledby="title description">
+  <title id="title">Portable Paths</title>
+  <desc id="description">A googly-eyed folder wearing enormous green clogs confidently steps over a banana peel shaped like a backslash.</desc>
+  <ellipse cx="247" cy="461" rx="183" ry="18" fill="#263248" opacity=".09"/>
+  <g stroke="#263248" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M185 293l-20 54 18 40M294 288l37 13 23 29" fill="none"/>
+    <path d="M112 212q-48 4-41 47m-2-6-10 9m12-7 5 11M379 188q42-17 56 11m-7-6 13-3m-9 7 10 4" fill="none"/>
+    <g transform="rotate(-7 252 205)">
+      <path d="M104 158v-44q0-19 19-19h68l27 27h162q19 0 19 19v128q0 20-20 20H124q-20 0-20-20z" fill="#e9a934"/>
+      <path d="M101 149h298q13 0 11 14l-20 128q-2 16-20 16H119q-18 0-20-17L87 165q-2-16 14-16z" fill="#ffd467"/>
+      <path d="M114 170h266" fill="none" stroke="#fff1bb" stroke-width="7"/>
+      <ellipse cx="198" cy="204" rx="32" ry="35" fill="#fffdf6"/>
+      <ellipse cx="283" cy="205" rx="29" ry="32" fill="#fffdf6"/>
+      <ellipse cx="208" cy="210" rx="11" ry="15" fill="#263248" stroke="none"/>
+      <ellipse cx="293" cy="198" rx="10" ry="13" fill="#263248" stroke="none"/>
+      <circle cx="211" cy="206" r="4" fill="#fffdf6" stroke="none"/>
+      <circle cx="296" cy="195" r="3" fill="#fffdf6" stroke="none"/>
+      <path d="M173 158l27-6m70 1 20 5" fill="none" stroke-width="7"/>
+      <path d="M221 258q27 22 52-3" fill="none" stroke-width="7"/>
+      <path d="M268 254l8 1" fill="none" stroke-width="7"/>
+    </g>
+    <g transform="rotate(-17 382 339)">
+      <path d="M305 327q-14-27 5-38l55 28" fill="none" stroke="#44b98b" stroke-width="15"/>
+      <path d="M303 329q24-20 54-18l31 13h41q44 0 45 27 0 17-22 18H317q-28 0-26-22 1-12 12-18z" fill="#70d6a0"/>
+      <path d="M298 351q76 12 171-1" fill="none" stroke="#269878" stroke-width="9"/>
+      <path d="M299 356q77 14 171-1" fill="none" stroke-width="6"/>
+      <ellipse cx="387" cy="336" rx="8" ry="5" fill="#269878" stroke="none"/>
+      <ellipse cx="415" cy="337" rx="8" ry="5" fill="#269878" stroke="none"/>
+      <ellipse cx="443" cy="340" rx="7" ry="5" fill="#269878" stroke="none"/>
+      <circle cx="314" cy="330" r="6" fill="#ffd467" stroke-width="4"/>
+    </g>
+    <g transform="rotate(4 162 416)">
+      <path d="M172 392q9-38 34-36l27 28" fill="none" stroke="#44b98b" stroke-width="15"/>
+      <path d="M100 397q22-17 58-18h35q21 2 38 19l9 24q5 24-21 24H85q-28-1-27-20 1-21 42-29z" fill="#70d6a0"/>
+      <path d="M65 426q81 13 170-1" fill="none" stroke="#269878" stroke-width="10"/>
+      <path d="M63 433q78 12 173-1" fill="none" stroke-width="6"/>
+      <ellipse cx="89" cy="410" rx="8" ry="5" fill="#269878" stroke="none"/>
+      <ellipse cx="117" cy="402" rx="8" ry="5" fill="#269878" stroke="none"/>
+      <ellipse cx="145" cy="401" rx="8" ry="5" fill="#269878" stroke="none"/>
+      <ellipse cx="172" cy="406" rx="8" ry="5" fill="#269878" stroke="none"/>
+      <circle cx="205" cy="397" r="6" fill="#ffd467" stroke-width="4"/>
+    </g>
+    <g stroke-width="6">
+      <path d="M297 399l9 12" fill="none"/>
+      <path d="M305 410q17 13 18 29 9 13 33 25-26 12-43-11-2-19-8-43z" fill="#ffd467"/>
+      <path d="M315 429q-13 15-39 9 10 25 38 19l9-17" fill="#ffe697"/>
+      <path d="M317 430q20 4 34-13 12 26-24 32" fill="#ffe697"/>
+      <path d="M313 419l22 35" fill="none" stroke="#e9a934" stroke-width="4"/>
+    </g>
+    <path d="M413 270l12-15m-4 30 17-3" fill="none" stroke="#e9a934" stroke-width="6"/>
+  </g>
+</svg>
