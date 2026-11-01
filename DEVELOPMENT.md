@@ -30,6 +30,12 @@ npm test -- test/integration.test.mjs
 
 The package remains private until publication is explicitly prepared. Keep the archive limited to the runtime implementation and linked documentation; do not ship test fixtures or development dependencies.
 
+The [ESLint](examples/eslint) and [Oxlint](examples/oxlint) examples are independent projects, each with its own manifest, lockfile, and installed plugin dependency. Run `npm ci` and `npm run lint` inside each example directory; the repository-root install is not required. `.npmrc` enables `install-links` to install the local plugin as a package with its own runtime dependencies.
+
+The separate Examples workflow runs `npm ci` and `npm run lint` inside each example on Linux, macOS, and Windows without installing repository-root dependencies. The Oxlint adapter supplies valid budget defaults because Oxlint validates plugin defaults before merging configured options.
+
+Repository-root ESLint excludes the standalone examples so ESLint 10 does not discover their configuration without their separately installed dependencies. Their own workflow handles linting; the root plugin's filesystem inventory still checks their names.
+
 ## Integration Tests
 
 The [data-driven CLI acceptance suite](https://github.com/dblock/eslint-plugin-portable-paths/blob/main/fixtures/README.md) packs the plugin and installs it with ESLint. Reviewed fixtures assert complete diagnostics and exit codes, offline runtime, and project/dependency immutability.

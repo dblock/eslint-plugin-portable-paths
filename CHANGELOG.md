@@ -2,6 +2,7 @@
 
 ## 0.1.0 (Unreleased)
 
+- [#7](https://github.com/dblock/eslint-plugin-portable-paths/pull/7): Add self-contained ESLint and Oxlint examples with independent dependencies, lockfiles, cross-platform linting CI, and all three portability rules - [@dblock](https://github.com/dblock).
 - [#6](https://github.com/dblock/eslint-plugin-portable-paths/pull/6): Add opt-in `max-pathname-length` with independent relative-path UTF-16 and filename UTF-8 byte budgets, cache-safe snapshots, and support for custom roots and inventory ignores without autofixes - [@dblock](https://github.com/dblock).
 - [#5](https://github.com/dblock/eslint-plugin-portable-paths/pull/5): Add `no-windows-invalid-names` for reserved devices, forbidden characters, and trailing spaces or periods; enable it in the recommended preset and configuration helper without length checks or autofixes - [@dblock](https://github.com/dblock).
 - [#4](https://github.com/dblock/eslint-plugin-portable-paths/pull/4): Run CI on pull requests and pushes to `main`, avoiding duplicate runs for upstream feature branches - [@dblock](https://github.com/dblock).

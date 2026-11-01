@@ -1,0 +1,15 @@
+{
+  "name": "portable-paths-oxlint-example",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "oxlint --config oxlint.config.mjs ."
+  },
+  "devDependencies": {
+    "eslint-plugin-portable-paths": "file:../..",
+    "oxlint": "1.90.0"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  }
+}

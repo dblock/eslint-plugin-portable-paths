@@ -63,22 +63,6 @@ eslint.config.mjs
 
 Findings are reported on the configuration file; its project path is omitted above. Keep that file included and unignored. Rules report problems without autofixes. The collision example requires a filesystem that retains both spellings.
 
-## Configuration
-
-Exclude `vendor/` and `generated/` from the plugin's filesystem inventory while preserving its default exclusions:
-
-```js
-import { createConfig, DEFAULT_IGNORES } from "eslint-plugin-portable-paths";
-
-export default [createConfig({
-  ignores: [...DEFAULT_IGNORES, "vendor/**", "generated/**"],
-})];
-```
-
-This plugin-wide `ignores` option controls the filesystem inventory, not an individual rule. It replaces the defaults (`**/.git/**` and `**/node_modules/**`), so spread `DEFAULT_IGNORES` to retain them. ESLint's configuration-level `ignores` only controls which files it lints; it does not remove paths from this plugin's separate inventory.
-
-For integrations from code, see the [programmatic API](API.md).
-
 ## Rules
 
 ### [no-case-collisions](src/rules/no-case-collisions/README.md)
@@ -127,6 +111,26 @@ export default [{
 ```
 
 This rule is opt-in and is not enabled by the recommended preset. The example budgets leave room for checkout folders and common filesystem name limits, not a universal compatibility guarantee. See the [rule guide](src/rules/max-pathname-length/README.md) for details and configuration with [inventory exclusions](#configuration).
+
+## Configuration
+
+Exclude `vendor/` and `generated/` from the plugin's filesystem inventory while preserving its default exclusions:
+
+```js
+import { createConfig, DEFAULT_IGNORES } from "eslint-plugin-portable-paths";
+
+export default [createConfig({
+  ignores: [...DEFAULT_IGNORES, "vendor/**", "generated/**"],
+})];
+```
+
+This plugin-wide `ignores` option controls the filesystem inventory, not an individual rule. It replaces the defaults (`**/.git/**` and `**/node_modules/**`), so spread `DEFAULT_IGNORES` to retain them. ESLint's configuration-level `ignores` only controls which files it lints; it does not remove paths from this plugin's separate inventory.
+
+For integrations from code, see the [programmatic API](API.md).
+
+## Examples
+
+Try the self-contained [ESLint example](examples/eslint) or [Oxlint example](examples/oxlint), each with its own dependencies, lockfile, and linting CI. Both enable all three rules and scan assets independently of the linter's file selection. Oxlint's JavaScript plugin API is in alpha; its example uses an explicit snapshot and reporting anchor.
 
 ## Contributing
 

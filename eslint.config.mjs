@@ -1,7 +1,7 @@
 import { createConfig, DEFAULT_IGNORES } from "./src/index.mjs";
 
 export default [
-  { ignores: ["fixtures/**"] },
+  { ignores: ["fixtures/**", "examples/**"] },
   {
     files: ["**/*.mjs"],
     rules: {

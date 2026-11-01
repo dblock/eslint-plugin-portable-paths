@@ -1,0 +1,30 @@
+name: Examples
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: ${{ matrix.example }} / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        example: [eslint, oxlint]
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    defaults:
+      run:
+        working-directory: examples/${{ matrix.example }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: examples/${{ matrix.example }}/package-lock.json
+      - run: npm ci
+      - run: npm run lint
